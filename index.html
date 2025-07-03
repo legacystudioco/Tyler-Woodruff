@@ -245,74 +245,81 @@
             font-size: 0.9rem;
         }
 
-       /* Experience Section */
-.experience-timeline {
-    position: relative;
-    margin-top: 50px;
-}
+        /* Experience Section - FIXED */
+        .experience-timeline {
+            position: relative;
+            margin-top: 50px;
+            padding: 0 20px;
+        }
 
-.experience-timeline::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(135deg, #00d4ff, #a78bfa);
-}
+        .experience-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(135deg, #00d4ff, #a78bfa);
+        }
 
-.experience-item {
-    position: relative;
-    margin-bottom: 50px;
-    padding: 30px;
-    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-    border-radius: 15px;
-    border: 1px solid #333;
-    width: calc(50% - 30px);
-}
+        .experience-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-radius: 15px;
+            border: 1px solid #333;
+            width: calc(50% - 30px);
+        }
 
-.experience-item:nth-child(odd) {
-    left: 0;
-}
+        .experience-item:nth-child(odd) {
+            left: 0;
+        }
 
-.experience-item:nth-child(even) {
-    left: calc(50% + 30px);
-}
+        .experience-item:nth-child(even) {
+            left: calc(50% + 30px);
+        }
 
-.experience-item::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #00d4ff;
-    border-radius: 50%;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-}
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #00d4ff;
+            border-radius: 50%;
+            top: 40px;
+            z-index: 1;
+        }
 
-.experience-item h4 {
-    color: #00d4ff;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
+        .experience-item:nth-child(odd)::before {
+            right: -40px;
+        }
 
-.experience-item .company {
-    color: #ff6b6b;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
+        .experience-item:nth-child(even)::before {
+            left: -40px;
+        }
 
-.experience-item .duration {
-    color: #a78bfa;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-}
+        .experience-item h4 {
+            color: #00d4ff;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
 
-.experience-item p {
-    color: #b0b0b0;
-}
+        .experience-item .company {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .experience-item .duration {
+            color: #a78bfa;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .experience-item p {
+            color: #b0b0b0;
+        }
 
         /* Education Section */
         .education-list {
@@ -470,6 +477,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .experience-timeline {
+                padding: 0 10px;
+            }
+
             .experience-timeline::before {
                 left: 20px;
             }
@@ -540,97 +551,95 @@
                 <a href="https://www.instagram.com/reel/DLQAsFIgMRv/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" class="project-btn">See Overview</a>
             </div>
             
-       <div class="project-card">
-  <h3>LifeCaptain & HookGen Studio Showcase</h3>
-  <p>Explore a private preview of two upcoming products: LifeCaptain, an AI-powered productivity co-pilot, and HookGen Studio, a viral video script generator. Both are currently in development and reflect my full-stack approach to UI/UX design, product strategy, and branding.</p>
-  <div class="project-skills">
-    <span class="skill-tag">UI/UX Design</span>
-    <span class="skill-tag">Product Strategy</span>
-    <span class="skill-tag">AI Integration</span>
-  </div>
-  <a href="https://legacystudioco.github.io/upcoming-releases/" class="project-btn" target="_blank">View Private Showcase</a>
-</div>
-           
+            <div class="project-card">
+                <h3>LifeCaptain & HookGen Studio Showcase</h3>
+                <p>Explore a private preview of two upcoming products: LifeCaptain, an AI-powered productivity co-pilot, and HookGen Studio, a viral video script generator. Both are currently in development and reflect my full-stack approach to UI/UX design, product strategy, and branding.</p>
+                <div class="project-skills">
+                    <span class="skill-tag">UI/UX Design</span>
+                    <span class="skill-tag">Product Strategy</span>
+                    <span class="skill-tag">AI Integration</span>
+                </div>
+                <a href="https://legacystudioco.github.io/upcoming-releases/" class="project-btn" target="_blank">View Private Showcase</a>
+            </div>
         </div>
     </section>
 
     <!-- Skills Section -->
     <section class="section">
-    <h2>Skills & Expertise</h2>
-    <div class="skills-grid">
-        <div class="skill-item">
-            <h4>Event & Conference Production</h4>
-            <p>Multi-day event management</p>
+        <h2>Skills & Expertise</h2>
+        <div class="skills-grid">
+            <div class="skill-item">
+                <h4>Event & Conference Production</h4>
+                <p>Multi-day event management</p>
+            </div>
+            <div class="skill-item">
+                <h4>Video Editing</h4>
+                <p>Premiere Pro, Final Cut</p>
+            </div>
+            <div class="skill-item">
+                <h4>Graphic Design</h4>
+                <p>Photoshop, Illustrator</p>
+            </div>
+            <div class="skill-item">
+                <h4>AI-Enhanced Creative Workflow</h4>
+                <p>Claude, ChatGPT, Midjourney, Sora, Runway, D-ID</p>
+            </div>
+            <div class="skill-item">
+                <h4>Stage & Lighting Design</h4>
+                <p>Production design</p>
+            </div>
+            <div class="skill-item">
+                <h4>Livestream Management</h4>
+                <p>OBS, Multi-Cam</p>
+            </div>
+            <div class="skill-item">
+                <h4>Social Media Strategy</h4>
+                <p>TikTok, YouTube</p>
+            </div>
+            <div class="skill-item">
+                <h4>Web Design</h4>
+                <p>Wix, Squarespace, Basic HTML/CSS</p>
+            </div>
+            <div class="skill-item">
+                <h4>Volunteer Training Systems</h4>
+                <p>Team development</p>
+            </div>
+            <div class="skill-item">
+                <h4>Project Management</h4>
+                <p>Budgeting & coordination</p>
+            </div>
+            <div class="skill-item">
+                <h4>Leadership & Creative Direction</h4>
+                <p>Vision & execution</p>
+            </div>
         </div>
-        <div class="skill-item">
-            <h4>Video Editing</h4>
-            <p>Premiere Pro, Final Cut</p>
-        </div>
-        <div class="skill-item">
-            <h4>Graphic Design</h4>
-            <p>Photoshop, Illustrator</p>
-        </div>
-        <div class="skill-item">
-            <h4>AI-Enhanced Creative Workflow</h4>
-            <p>Claude, ChatGPT, Midjourney, Sora, Runway, D-ID</p>
-        </div>
-        <div class="skill-item">
-            <h4>Stage & Lighting Design</h4>
-            <p>Production design</p>
-        </div>
-        <div class="skill-item">
-            <h4>Livestream Management</h4>
-            <p>OBS, Multi-Cam</p>
-        </div>
-        <div class="skill-item">
-            <h4>Social Media Strategy</h4>
-            <p>TikTok, YouTube</p>
-        </div>
-        <div class="skill-item">
-            <h4>Web Design</h4>
-            <p>Wix, Squarespace, Basic HTML/CSS</p>
-        </div>
-        <div class="skill-item">
-            <h4>Volunteer Training Systems</h4>
-            <p>Team development</p>
-        </div>
-        <div class="skill-item">
-            <h4>Project Management</h4>
-            <p>Budgeting & coordination</p>
-        </div>
-        <div class="skill-item">
-            <h4>Leadership & Creative Direction</h4>
-            <p>Vision & execution</p>
-        </div>
-    </div>
     </section>
 
- <!-- Experience Section -->
-<section class="section">
-    <h2>Professional Experience</h2>
-    <div class="experience-timeline">
-        <div class="experience-item">
-            <h4>Creative Pastor/Director & Event Lead</h4>
-            <div class="company">Life Change Church</div>
-            <div class="duration">2023–Present</div>
-            <p>Founded, managed, and led Kingdom Conf. Led creative team, managed brand visuals, produced content for sermons and events.</p>
-        </div>
+    <!-- Experience Section -->
+    <section class="section">
+        <h2>Professional Experience</h2>
+        <div class="experience-timeline">
+            <div class="experience-item">
+                <h4>Creative Pastor/Director & Event Lead</h4>
+                <div class="company">Life Change Church</div>
+                <div class="duration">2023–Present</div>
+                <p>Founded, managed, and led Kingdom Conf. Led creative team, managed brand visuals, produced content for sermons and events.</p>
+            </div>
 
-        <div class="experience-item">
-            <h4>Freelance Designer & Front-End Developer</h4>
-            <div class="company">Remote</div>
-            <div class="duration">2010–Present</div>
-            <p>Built full-stack interfaces and mobile apps for client projects. Designed AI-integrated tools, onboarding flows, and landing pages. Managed product lifecycle from wireframes to coded launch.</p>
-        </div>
-    </div>
+            <div class="experience-item">
+                <h4>Freelance Designer & Front-End Developer</h4>
+                <div class="company">Remote</div>
+                <div class="duration">2010–Present</div>
+                <p>Built full-stack interfaces and mobile apps for client projects. Designed AI-integrated tools, onboarding flows, and landing pages. Managed product lifecycle from wireframes to coded launch.</p>
+            </div>
 
-    <div class="experience-item">
-        <h4>Family Life Pastor</h4>
-        <div class="company">True Life Church</div>
-        <div class="duration">2019–2023</div>
-        <p>Handled AV, digital media, and stage design for multi-day gatherings and promos.</p>
-    </div>
-    
+            <div class="experience-item">
+                <h4>Family Life Pastor</h4>
+                <div class="company">True Life Church</div>
+                <div class="duration">2019–2023</div>
+                <p>Handled AV, digital media, and stage design for multi-day gatherings and promos.</p>
+            </div>
+        </div>
     </section>
 
     <!-- Education Section -->
@@ -669,32 +678,32 @@
             </div>
             
             <div class="social-links">
-    <a href="https://www.linkedin.com/in/tyler-woodruff-a8179a175" class="social-link" title="LinkedIn" target="_blank">
-        <span>in</span>
-    </a>
-    <a href="https://www.facebook.com/tylersbangerang" class="social-link" title="Facebook" target="_blank">
-        <span>fb</span>
-    </a>
-    <a href="https://www.instagram.com/tylersbangerang" class="social-link" title="Instagram" target="_blank">
-        <span>ig</span>
-    </a>
-</div>
+                <a href="https://www.linkedin.com/in/tyler-woodruff-a8179a175" class="social-link" title="LinkedIn" target="_blank">
+                    <span>in</span>
+                </a>
+                <a href="https://www.facebook.com/tylersbangerang" class="social-link" title="Facebook" target="_blank">
+                    <span>fb</span>
+                </a>
+                <a href="https://www.instagram.com/tylersbangerang" class="social-link" title="Instagram" target="_blank">
+                    <span>ig</span>
+                </a>
+            </div>
             
-           <form class="contact-form" action="https://formspree.io/f/xzzgwkkk" method="POST">
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
-    </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
-    </div>
-    <div class="form-group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" required></textarea>
-    </div>
-    <button type="submit" class="submit-btn">Send Message</button>
-</form>
+            <form class="contact-form" action="https://formspree.io/f/xzzgwkkk" method="POST">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
         </div>
     </section>
 </body>
