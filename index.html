@@ -190,7 +190,78 @@
             }
         }
 
-        /* About Section */
+        /* Resume Buttons */
+        .resume-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+        }
+
+        .resume-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #8b45c6, #4a90e2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 10px 30px rgba(139, 69, 198, 0.3);
+        }
+
+        .resume-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #9b55d6, #5aa0f2);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .resume-btn:hover::before {
+            left: 0;
+        }
+
+        .resume-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(139, 69, 198, 0.5);
+        }
+
+        .btn-icon {
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .resume-btn:hover .btn-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Mobile Responsive for Resume Buttons */
+        @media (max-width: 768px) {
+            .resume-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .resume-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+        }
         .about-content {
             font-size: 1.2rem;
             line-height: 1.8;
@@ -756,6 +827,18 @@
         <h2>About Me</h2>
         <div class="about-content">
             <p>I'm a creative leader with over a decade of experience producing digital media, managing live events, and leading large-scale projects from concept to execution. Whether it's directing a multi-day conference, scaling production teams, or designing visuals that move people — I bring a unique blend of vision, storytelling, and execution. I'm passionate about building systems that help creative teams thrive.</p>
+        </div>
+
+        <!-- Resume Buttons -->
+        <div class="resume-buttons">
+            <a href="./Tyler Woodruff 2025.pdf" class="resume-btn" target="_blank">
+                <span class="btn-icon">📄</span>
+                Full Resume
+            </a>
+            <a href="./Tyler Woodruff - Cover Letter.pdf" class="resume-btn" target="_blank">
+                <span class="btn-icon">📋</span>
+                Cover Letter
+            </a>
         </div>
     </section>
 
