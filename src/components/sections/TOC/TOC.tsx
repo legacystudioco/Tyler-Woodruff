@@ -228,7 +228,7 @@ export function TOC() {
 
         {/* Invisible hitboxes for interaction */}
         {hitboxes.map((hitbox) => (
-          <button
+          <motion.button
             key={hitbox.id}
             type="button"
             className="absolute bg-transparent cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-lg"
@@ -245,11 +245,15 @@ export function TOC() {
               setHoveredId(hitbox.targetLayerId);
             }}
             onMouseLeave={() => setHoveredId(null)}
+            onTouchStart={() => setHoveredId(hitbox.targetLayerId)}
+            onTouchEnd={() => setHoveredId(null)}
             onFocus={() => setHoveredId(hitbox.targetLayerId)}
             onBlur={() => {
               setHoveredId(null);
             }}
             onClick={() => scrollToSection(hitbox.targetSectionId)}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.15 }}
           >
             {DEBUG_HOVER_MAP && (
               <span
@@ -259,7 +263,7 @@ export function TOC() {
                 target: {hitbox.targetLayerId}
               </span>
             )}
-          </button>
+          </motion.button>
         ))}
       </div>
     </ResponsiveArtboard>

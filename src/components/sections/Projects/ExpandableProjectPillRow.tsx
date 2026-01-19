@@ -311,13 +311,15 @@ export function ExpandableProjectPillRow({
       )}
 
       {/* Main pill wrapper - clickable button */}
-      <button
+      <motion.button
         onClick={handleClick}
         className="relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-lg"
-        style={{ zIndex: 10 }}
+        style={{ zIndex: 10, minHeight: "44px" }}
         aria-expanded={isExpanded}
         aria-controls={dropdownId}
         aria-label={isExpanded ? `Collapse ${rowId}` : `Expand ${rowId}`}
+        whileTap={{ scale: 0.98 }}
+        transition={{ duration: 0.1 }}
       >
         {/*
           Fixed-width pill container - this box maintains consistent width
@@ -416,7 +418,7 @@ export function ExpandableProjectPillRow({
             </motion.div>
           </div>
         </div>
-      </button>
+      </motion.button>
 
       {/*
         Dropdown panel - ABSOLUTELY positioned under the pill

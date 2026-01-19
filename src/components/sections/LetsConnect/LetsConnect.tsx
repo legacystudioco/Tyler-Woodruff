@@ -201,6 +201,7 @@ export function LetsConnect() {
                 className="relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-lg"
                 style={{
                   display: "block",
+                  minHeight: "44px",
                   ...(glowStyle),
                   ...(DEBUG_HITBOXES
                     ? {
@@ -218,6 +219,10 @@ export function LetsConnect() {
                   scale: 1.03,
                   y: -4,
                 }}
+                whileTap={{
+                  scale: 1.03,
+                  y: -4,
+                }}
                 transition={{
                   duration: 0.2,
                   ease: "easeOut",
@@ -230,7 +235,7 @@ export function LetsConnect() {
                   height={button.height}
                   style={{
                     width: "auto",
-                    height: "clamp(34px, 4vw, 60px)",
+                    height: "clamp(44px, 4vw, 60px)",
                     objectFit: "contain",
                   }}
                 />

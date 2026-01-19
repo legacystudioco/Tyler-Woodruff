@@ -48,9 +48,17 @@ export function ResponsiveArtboard({
   allowOverflow = false,
 }: ResponsiveArtboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  // Start with scale that assumes mobile viewport to prevent initial overflow flash
+  // This will be corrected immediately by ResizeObserver on mount
+  const [scale, setScale] = useState(() => {
+    // SSR-safe: assume small viewport initially
+    if (typeof window === "undefined") return 0.2;
+    return Math.min(1, window.innerWidth / designWidth);
+  });
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(true);
     const container = containerRef.current;
     if (!container) return;
 
@@ -79,7 +87,7 @@ export function ResponsiveArtboard({
   return (
     <section
       id={id}
-      className={`relative w-full ${allowOverflow ? "overflow-visible" : "overflow-hidden"} ${className}`}
+      className={`relative w-full ${allowOverflow ? "overflow-y-visible overflow-x-hidden" : "overflow-hidden"} ${className}`}
       style={{
         zIndex: zIndex,
         position: "relative",
@@ -88,7 +96,7 @@ export function ResponsiveArtboard({
       {/* Outer container: full width, sets measurement reference */}
       <div
         ref={containerRef}
-        className="mx-auto w-full relative"
+        className={`mx-auto w-full relative ${allowOverflow ? "overflow-y-visible overflow-x-hidden" : ""}`}
         style={{
           maxWidth: `${designWidth}px`,
           // The container height is determined by aspect ratio at current width
@@ -102,6 +110,9 @@ export function ResponsiveArtboard({
             width: `${designWidth}px`,
             aspectRatio: aspectRatio,
             transform: `scale(${scale})`,
+            // Prevent flash of unscaled content during SSR/hydration
+            opacity: isHydrated ? 1 : 0,
+            transition: "opacity 0.1s ease-out",
           }}
         >
           {children}

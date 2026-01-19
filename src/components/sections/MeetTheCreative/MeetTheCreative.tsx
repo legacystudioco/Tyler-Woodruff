@@ -368,7 +368,7 @@ export function MeetTheCreative() {
               target="_blank"
               rel="noopener noreferrer"
               className="block cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 rounded-lg mb-1"
-              style={pillGlowStyle}
+              style={{ ...pillGlowStyle, minHeight: "44px" }}
               aria-label={clickablePills[0].label}
               variants={createPillBreathingVariants(0, 0)}
               animate="animate"
@@ -377,6 +377,12 @@ export function MeetTheCreative() {
                 scale: 0.7 * 1.015,
                 filter: pillHoverGlow,
                 transition: { duration: 0.25, ease: "easeOut" },
+              }}
+              whileTap={{
+                y: -6,
+                scale: 0.7 * 1.015,
+                filter: pillHoverGlow,
+                transition: { duration: 0.15, ease: "easeOut" },
               }}
             >
               <Image
@@ -393,7 +399,7 @@ export function MeetTheCreative() {
             <motion.a
               href={clickablePills[1].href}
               className="block cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 rounded-lg"
-              style={pillGlowStyle}
+              style={{ ...pillGlowStyle, minHeight: "44px" }}
               aria-label={clickablePills[1].label}
               variants={createPillBreathingVariants(0.5, -20)}
               animate="animate"
@@ -402,6 +408,12 @@ export function MeetTheCreative() {
                 scale: 0.7 * 1.015,
                 filter: pillHoverGlow,
                 transition: { duration: 0.25, ease: "easeOut" },
+              }}
+              whileTap={{
+                y: -20 - 6,
+                scale: 0.7 * 1.015,
+                filter: pillHoverGlow,
+                transition: { duration: 0.15, ease: "easeOut" },
               }}
             >
               <Image

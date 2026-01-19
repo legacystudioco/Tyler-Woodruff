@@ -97,3 +97,35 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================
+   MOBILE TOUCH INTERACTION ENHANCEMENTS
+   ========================================== */
+
+/* Remove tap highlight on iOS/Android */
+button,
+a,
+[role="button"],
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent callout menu on long-press for images in buttons */
+button img,
+a img,
+[role="button"] img {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Ensure interactive elements have appropriate cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device - cursor is irrelevant but ensure elements are still tappable */
+  button,
+  a,
+  [role="button"] {
+    cursor: pointer;
+  }
+}

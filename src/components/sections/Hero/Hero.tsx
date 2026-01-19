@@ -341,6 +341,9 @@ export function Hero() {
               left: sprite.left,
               width: sprite.width,
               height: sprite.height,
+              // Ensure minimum 44px touch target via padding extension
+              minWidth: "44px",
+              minHeight: "44px",
               zIndex: 30,
               outline: DEBUG_FOLDER_SPRITES ? "1px solid #ff0000" : "none",
             }}
@@ -351,6 +354,12 @@ export function Hero() {
             onBlur={() => setHoveredId(null)}
             onClick={() => scrollToSection(sprite.targetSectionId)}
             whileHover={{
+              y: -6,
+              rotateZ: sprite.hoverRotate,
+              scale: 1.015,
+              filter: "drop-shadow(0 0 8px rgba(0, 210, 255, 0.35))",
+            }}
+            whileTap={{
               y: -6,
               rotateZ: sprite.hoverRotate,
               scale: 1.015,
