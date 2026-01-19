@@ -9,6 +9,7 @@ import {
   desyncDelays,
   desyncDurations,
 } from "@/lib/motionPresets";
+import { ResponsiveArtboard } from "@/components/ui/ResponsiveArtboard";
 
 /**
  * Base position offset for tool strip (Framer Motion x/y)
@@ -207,15 +208,8 @@ export function MeetTheCreative() {
   let floatIndex = 0;
 
   return (
-    <section id="meet-the-creative" className="relative w-full overflow-hidden">
-      {/* Centered artboard container */}
-      <div
-        className="relative mx-auto"
-        style={{
-          width: "min(1920px, 100vw)",
-          aspectRatio: "16 / 9",
-        }}
-      >
+    <ResponsiveArtboard id="meet-the-creative" aspectRatio="16 / 9">
+      <div className="relative w-full h-full">
         {/* Background layer - fixed, no transform */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -422,7 +416,7 @@ export function MeetTheCreative() {
           </div>
         </div>
       </div>
-    </section>
+    </ResponsiveArtboard>
   );
 }
 

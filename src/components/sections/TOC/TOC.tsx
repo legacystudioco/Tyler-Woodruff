@@ -8,6 +8,7 @@ import {
   desyncDelays,
   desyncDurations,
 } from "@/lib/motionPresets";
+import { ResponsiveArtboard } from "@/components/ui/ResponsiveArtboard";
 
 /**
  * TOC (Table of Contents) Section
@@ -160,15 +161,8 @@ export function TOC() {
   let floatIndex = 0;
 
   return (
-    <section className="relative w-full overflow-hidden">
-      {/* Centered artboard container */}
-      <div
-        className="relative mx-auto"
-        style={{
-          width: "min(1920px, 100vw)",
-          aspectRatio: "16 / 9",
-        }}
-      >
+    <ResponsiveArtboard aspectRatio="16 / 9">
+      <div className="relative w-full h-full">
         {/* Visual layers - all pointer-events-none */}
         {layers.map((layer, index) => {
           const isBackground = layer.id === "toc-01";
@@ -268,7 +262,7 @@ export function TOC() {
           </button>
         ))}
       </div>
-    </section>
+    </ResponsiveArtboard>
   );
 }
 

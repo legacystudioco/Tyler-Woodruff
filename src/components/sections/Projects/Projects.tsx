@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { glowStyle, desyncDelays, desyncDurations } from "@/lib/motionPresets";
 import { ExpandableProjectPillRow } from "./ExpandableProjectPillRow";
+import { ResponsiveArtboard } from "@/components/ui/ResponsiveArtboard";
 
 /**
  * Projects Section
@@ -234,21 +235,15 @@ export function Projects() {
   const isAnyOpen = activeRowId !== null;
 
   return (
-    <section
+    <ResponsiveArtboard
       id="projects"
-      className="relative w-full overflow-visible"
-      style={{
-        // Raise z-index when expanded so dropdowns overlap next section
-        zIndex: isAnyOpen ? 20 : 1,
-        position: "relative",
-      }}
+      aspectRatio="1920 / 1469.4451"
+      zIndex={isAnyOpen ? 20 : 1}
+      allowOverflow={true}
     >
       <div
-        className="relative mx-auto overflow-visible"
+        className="relative w-full h-full"
         style={{
-          width: "min(1920px, 100vw)",
-          // Fixed aspect ratio - no dynamic height changes
-          aspectRatio: "1920 / 1469.4451",
           backgroundColor: "#050B2A",
         }}
       >
@@ -372,7 +367,7 @@ export function Projects() {
           aria-hidden="true"
         />
       </div>
-    </section>
+    </ResponsiveArtboard>
   );
 }
 

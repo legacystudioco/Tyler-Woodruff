@@ -10,6 +10,7 @@ import {
   desyncDurations,
 } from "@/lib/motionPresets";
 import { SectionRegistry } from "@/lib/section-registry";
+import { ResponsiveArtboard } from "@/components/ui/ResponsiveArtboard";
 
 /**
  * DEBUG_LAYER Toggle
@@ -190,14 +191,8 @@ export function Hero() {
   let floatIndex = 0;
 
   return (
-    <section className="relative w-full overflow-hidden">
-      <div
-        className="relative mx-auto"
-        style={{
-          width: "min(1920px, 100vw)",
-          aspectRatio: "16 / 9",
-        }}
-      >
+    <ResponsiveArtboard aspectRatio="16 / 9">
+      <div className="relative w-full h-full">
         {/* Visual layers - all pointer-events-none */}
         {visibleLayers.map((layer, index) => {
           const isBackground = layer.id === 1;
@@ -380,7 +375,7 @@ export function Hero() {
           </div>
         )}
       </div>
-    </section>
+    </ResponsiveArtboard>
   );
 }
 

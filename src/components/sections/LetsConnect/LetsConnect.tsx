@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { glowStyle, desyncDelays, desyncDurations } from "@/lib/motionPresets";
+import { ResponsiveArtboard } from "@/components/ui/ResponsiveArtboard";
 
 /**
  * Let's Connect Section
@@ -128,22 +129,12 @@ export function LetsConnect() {
   let floatIndex = 0;
 
   return (
-    <section
+    <ResponsiveArtboard
       id="lets-connect"
-      className="relative w-full overflow-hidden"
-      style={{
-        // Lower z-index so Projects dropdowns can overlap this section
-        zIndex: 0,
-        position: "relative",
-      }}
+      aspectRatio="1920 / 1057.1209"
+      zIndex={0}
     >
-      <div
-        className="relative mx-auto"
-        style={{
-          width: "min(1920px, 100vw)",
-          aspectRatio: "1920 / 1057.1209",
-        }}
-      >
+      <div className="relative w-full h-full">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 0 }}
@@ -254,9 +245,8 @@ export function LetsConnect() {
               </motion.a>
           ))}
         </div>
-
       </div>
-    </section>
+    </ResponsiveArtboard>
   );
 }
 
