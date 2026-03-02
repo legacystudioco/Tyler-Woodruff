@@ -1,13 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=https://tyler-woodruff.vercel.app">
-    <link rel="canonical" href="https://tyler-woodruff.vercel.app">
-    <meta name="robots" content="noindex">
-    <title>Redirecting...</title>
-  </head>
-  <body>
-    <p>Redirecting to <a href="https://tyler-woodruff.vercel.app">https://tyler-woodruff.vercel.app</a></p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio 2026" />
+  <title>Portfolio 2026</title>
+
+  <!-- Inter font — preconnect for perf -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===========================================
+       HERO
+       Desktop images : assets/hero/desktop/hero_D_01.png
+       Mobile  images : assets/hero/mobile/hero_M_01.png
+  =========================================== -->
+  <section
+    id="hero"
+    class="section"
+    data-section="hero"
+    data-desktop-count="1"
+    data-mobile-count="1"
+    aria-label="Hero"
+  >
+    <!-- scenes injected by script.js -->
+  </section>
+
+  <!-- ===========================================
+       ABOUT
+       Desktop : assets/about/desktop/about_D_01.png
+       Mobile  : assets/about/mobile/about_M_01.png
+  =========================================== -->
+  <section
+    id="about"
+    class="section"
+    data-section="about"
+    data-desktop-count="1"
+    data-mobile-count="1"
+    aria-label="About"
+  >
+    <!-- scenes injected by script.js -->
+  </section>
+
+  <!-- ===========================================
+       TABLE OF CONTENTS
+       Desktop : assets/toc/desktop/toc_D_01.png
+       Mobile  : assets/toc/mobile/toc_M_01.png
+  =========================================== -->
+  <section
+    id="toc"
+    class="section"
+    data-section="toc"
+    data-desktop-count="1"
+    data-mobile-count="1"
+    aria-label="Table of contents"
+  >
+    <!-- scenes injected by script.js -->
+  </section>
+
+  <!-- ===========================================
+       SELECTED WORK
+       Desktop : assets/selected-work/desktop/selected-work_D_01.png
+                 assets/selected-work/desktop/selected-work_D_02.png
+                 assets/selected-work/desktop/selected-work_D_05.png
+       Mobile  : assets/selected-work/mobile/selected-work_M_01.png
+                 assets/selected-work/mobile/selected-work_M_02.png
+                 assets/selected-work/mobile/selected-work_M_05.png
+  =========================================== -->
+  <section
+    id="selected-work"
+    class="section"
+    data-section="selected-work"
+    aria-label="Selected work"
+  >
+    <!-- scenes injected by script.js -->
+  </section>
+
+  <!-- ===========================================
+       WHAT I BUILD  —  horizontal scroll section
+       Desktop panels : assets/what-i-build/desktop/what-i-build_D_01.png … _03.png
+       Mobile  panels : assets/what-i-build/mobile/what-i-build_M_01.png  … _04.png
+
+       Desktop behavior : GSAP pins + horizontal scroll, 3 panels
+       Mobile  behavior : CSS scroll-snap horizontal swipe,  4 panels
+  =========================================== -->
+  <section
+    id="what-i-build"
+    class="horizontal-section"
+    data-section="what-i-build"
+    data-desktop-panels="3"
+    data-mobile-panels="4"
+    aria-label="What I Build"
+  >
+    <div class="horizontal-track" role="list" aria-label="What I Build panels">
+      <!-- panels injected by script.js -->
+    </div>
+
+    <!-- Visible only on mobile; fades out after first swipe -->
+    <p class="swipe-hint" aria-hidden="true">Swipe to explore &rarr;</p>
+  </section>
+
+  <!-- ===========================================
+       CONTACT
+       Desktop : assets/contact/desktop/contact_D_01.png
+       Mobile  : assets/contact/mobile/contact_M_01.png
+  =========================================== -->
+  <section
+    id="contact"
+    class="section"
+    data-section="contact"
+    data-desktop-count="1"
+    data-mobile-count="1"
+    aria-label="Contact"
+  >
+    <!-- scenes injected by script.js -->
+  </section>
+
+  <!-- GSAP core + ScrollTrigger (CDN, defer-safe as scripts load in order) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <!-- Main -->
+  <script src="script.js" defer></script>
+</body>
 </html>
