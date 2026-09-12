@@ -11,7 +11,7 @@ import { useHeroSelection } from "./HeroSelection";
 // forward" panel can pass in front of Tyler without ever winning against the title text.
 const FEATURED_Z = 9;
 const DIMMED_SCALE = 0.94;
-const FEATURED_OPACITY = 0.97;
+const FEATURED_OPACITY = 1;
 const DIMMED_OPACITY_FACTOR = 0.35;
 const POSITION_TRANSITION = "top 0.6s cubic-bezier(0.22,1,0.36,1), left 0.6s cubic-bezier(0.22,1,0.36,1)";
 const ORIENTATION_TRANSITION =
@@ -67,7 +67,10 @@ export default function FloatingArtifact({ artifact, ready }: { artifact: HeroAr
   const isDimmed = selectedId !== null && !isSelected;
 
   const depth = Math.min(artifact.depth, 1.1);
-  const baseOpacity = 0.26 + depth * 0.58;
+  // Media reads as opaque artwork inside a glass surface, not a translucent image — depth still
+  // recedes distant panels slightly, but never enough to let a card behind bleed through one in
+  // front of it. The glass border/blur/sheen (GlassSurface, ArtifactFrame) carry the "glass" feel.
+  const baseOpacity = Math.min(1, 0.86 + depth * 0.14);
   const baseScale = 0.8 + depth * 0.17;
 
   const scale = isSelected ? baseScale * artifact.featured.scale : isDimmed ? baseScale * DIMMED_SCALE : baseScale;
