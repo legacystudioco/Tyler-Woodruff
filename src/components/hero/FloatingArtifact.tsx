@@ -7,6 +7,7 @@ import ResponsiveMedia from "@/components/ui/ResponsiveMedia";
 import GlassSurface from "@/components/ui/GlassSurface";
 import ArtifactVisual from "./ArtifactVariants";
 import { useHeroSelection } from "./HeroSelection";
+import { cn } from "@/lib/utils";
 
 // Featured state lives at z-9 — above Tyler (z-8), below the headline (z-10) — so a "pulled
 // forward" panel can pass in front of Tyler without ever winning against the title text.
@@ -18,15 +19,37 @@ const POSITION_TRANSITION = "top 0.6s cubic-bezier(0.22,1,0.36,1), left 0.6s cub
 const ORIENTATION_TRANSITION =
   "transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease-out, filter 0.45s ease-out";
 
+function WindowDots({ compact, lit }: { compact: boolean; lit: boolean }) {
+  const size = compact ? "h-1.5 w-1.5" : "h-2 w-2";
+  return (
+    <div className={cn("flex items-center", compact ? "gap-1" : "gap-1.5")}>
+      <span className={cn("rounded-full bg-heat transition-opacity duration-300", size, lit ? "opacity-80" : "opacity-55")} />
+      <span
+        className={cn("rounded-full transition-opacity duration-300", size, lit ? "opacity-80" : "opacity-55")}
+        style={{ backgroundColor: "#d9a441" }}
+      />
+      <span className={cn("rounded-full bg-signal transition-opacity duration-300", size, lit ? "opacity-75" : "opacity-50")} />
+    </div>
+  );
+}
+
 function ArtifactFrame({
   artifact,
   ready,
   isSelected,
+  isHovered,
 }: {
   artifact: HeroArtifact;
   ready: boolean;
   isSelected: boolean;
+  isHovered: boolean;
 }) {
+  const compact = artifact.height < 200;
+  // Reflection direction is derived from each artifact's own authored tilt, not randomized —
+  // enough to keep the system from feeling mechanically identical card to card.
+  const sheenDirection = artifact.rotate >= 0 ? "bg-gradient-to-tr" : "bg-gradient-to-tl";
+  const showViewHint = !isSelected && isHovered;
+
   return (
     <>
       {ready && artifact.media ? (
@@ -42,14 +65,39 @@ function ArtifactFrame({
           <ArtifactVisual variant={artifact.variant} />
         </>
       )}
-      {/* holographic sheen + edge highlight */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.07] via-transparent to-transparent" />
+
+      {/* faint lime light catching the top-left edge of the glass, not a full outline */}
       <div
-        className="pointer-events-none absolute inset-0 ring-1 ring-inset"
-        style={{ boxShadow: artifact.anchor ? "inset 0 0 0 1px rgba(199,255,0,0.14)" : "inset 0 0 0 1px rgba(255,255,255,0.08)" }}
+        className={cn("pointer-events-none absolute -left-3 -top-3 h-16 w-16 rounded-full transition-opacity duration-300", isSelected ? "opacity-100" : "opacity-70")}
+        style={{ background: "radial-gradient(circle, rgba(199,255,0,0.12), transparent 70%)" }}
       />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-ink/80 to-transparent px-3 py-2 font-mono text-[9px] uppercase tracking-widest text-paper/60">
-        <span>{artifact.label}</span>
+
+      {/* soft specular streak across the surface — direction varies per card, stays subliminal */}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 via-transparent to-transparent transition-[background] duration-300",
+          sheenDirection,
+          isSelected ? "from-white/[0.10]" : "from-white/[0.06]"
+        )}
+      />
+
+      {/* hairline glass edge */}
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.08]" />
+
+      {/* subtle top display strip — visual device only, echoes a physical display bezel */}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 flex items-center border-b bg-gradient-to-b to-transparent transition-colors duration-300",
+          compact ? "h-5 px-2" : "h-6 px-3",
+          isSelected ? "border-white/[0.12] from-white/[0.06]" : "border-white/[0.06] from-white/[0.03]"
+        )}
+      >
+        <WindowDots compact={compact} lit={isSelected} />
+      </div>
+
+      {/* archive-style caption: category label (left) / figure number or view cue (right) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-ink/80 to-transparent px-3 py-2 font-mono text-[9px] uppercase tracking-widest">
+        <span className={cn("transition-opacity duration-300", isSelected ? "text-paper/70" : "text-paper/55")}>{artifact.label}</span>
         {isSelected ? (
           <Link
             href={artifact.projectHref}
@@ -60,7 +108,22 @@ function ArtifactFrame({
             <span aria-hidden>↘</span>
           </Link>
         ) : (
-          <span className="text-paper/30">{artifact.meta}</span>
+          <span className="relative inline-grid">
+            <span
+              className={cn("col-start-1 row-start-1 text-paper/40 transition-opacity duration-200", showViewHint ? "opacity-0" : "opacity-100")}
+            >
+              {artifact.meta}
+            </span>
+            <span
+              className={cn(
+                "col-start-1 row-start-1 flex items-center gap-1 whitespace-nowrap text-signal transition-opacity duration-200",
+                showViewHint ? "opacity-90" : "opacity-0"
+              )}
+              aria-hidden={!showViewHint}
+            >
+              View <span aria-hidden>↗</span>
+            </span>
+          </span>
         )}
       </div>
     </>
@@ -96,11 +159,13 @@ export default function FloatingArtifact({ artifact, ready }: { artifact: HeroAr
     ? "none"
     : isDimmed
       ? "blur(1.5px)"
-      : artifact.depth < 0.4
-        ? "blur(1px)"
-        : artifact.depth < 0.6
-          ? "blur(0.5px)"
-          : undefined;
+      : isHovered
+        ? "none"
+        : artifact.depth < 0.4
+          ? "blur(1px)"
+          : artifact.depth < 0.6
+            ? "blur(0.5px)"
+            : undefined;
 
   // Default state carries the panel's small editorial tilt; featured state straightens toward 0
   // so the work reads clearly front-on.
@@ -171,21 +236,21 @@ export default function FloatingArtifact({ artifact, ready }: { artifact: HeroAr
             onMouseLeave={() => setIsHovered(false)}
             onFocus={() => setIsHovered(true)}
             onBlur={() => setIsHovered(false)}
-            className="group h-full w-full cursor-pointer rounded-2xl outline-none transition-[transform,filter] duration-300 ease-out hover:scale-[1.045] hover:brightness-110 focus-visible:scale-[1.045] focus-visible:brightness-110 focus-visible:ring-2 focus-visible:ring-signal/70"
+            className="group h-full w-full cursor-pointer rounded-2xl outline-none transition-[transform,filter] duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.018] hover:brightness-105 focus-visible:-translate-y-1.5 focus-visible:scale-[1.018] focus-visible:brightness-105 focus-visible:ring-2 focus-visible:ring-signal/70"
           >
             {artifact.anchor ? (
               <GlassSurface
                 className="h-full w-full !rounded-xl transition-shadow duration-300 group-hover:ring-1 group-hover:ring-white/25"
                 style={{ boxShadow: `0 30px 70px rgba(0,0,0,0.5), ${glowShadow}` }}
               >
-                <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} />
+                <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} isHovered={isHovered} />
               </GlassSurface>
             ) : (
               <div
                 className="relative h-full w-full overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-[2px] transition-shadow duration-300 group-hover:border-white/25"
                 style={{ boxShadow: `0 20px 45px rgba(0,0,0,0.4), ${glowShadow}` }}
               >
-                <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} />
+                <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} isHovered={isHovered} />
               </div>
             )}
           </div>
