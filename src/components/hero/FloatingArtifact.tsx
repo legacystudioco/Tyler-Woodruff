@@ -9,9 +9,10 @@ import ArtifactVisual from "./ArtifactVariants";
 import { useHeroSelection } from "./HeroSelection";
 import { cn } from "@/lib/utils";
 
-// Featured state lives at z-9 — above Tyler (z-8), below the headline (z-10) — so a "pulled
-// forward" panel can pass in front of Tyler without ever winning against the title text.
-const FEATURED_Z = 9;
+// Featured state lives at z-11 — above Tyler (z-8) AND the headline (z-10), below the fixed
+// nav (z-50) — so the clicked artifact becomes the clear focal point instead of getting caught
+// in an awkward middle layer between Tyler and the title text.
+const FEATURED_Z = 11;
 const DIMMED_SCALE = 0.94;
 const FEATURED_OPACITY = 1;
 const DIMMED_OPACITY_FACTOR = 0.35;
