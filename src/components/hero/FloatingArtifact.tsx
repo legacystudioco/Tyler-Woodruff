@@ -29,7 +29,12 @@ function ArtifactFrame({
   return (
     <>
       {ready && artifact.media ? (
-        <ResponsiveMedia media={artifact.media} sizes="(min-width: 1024px) 32vw, 60vw" />
+        <>
+          {/* opaque backing so the source webp's own alpha channel can't reveal whatever
+              card sits behind this one in z-order — glass border/blur stays on the outer shell */}
+          {!artifact.anchor ? <div className="absolute inset-0 bg-graphite" /> : null}
+          <ResponsiveMedia media={artifact.media} sizes="(min-width: 1024px) 32vw, 60vw" />
+        </>
       ) : (
         <>
           {!artifact.anchor ? <div className="absolute inset-0 bg-graphite" /> : null}

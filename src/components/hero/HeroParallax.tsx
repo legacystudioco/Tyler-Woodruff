@@ -43,6 +43,7 @@ export default function HeroParallax({ children }: { children: React.ReactNode }
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       className="absolute inset-0"
+      style={{ transform: "translateX(-4vw)" }}
     >
       {children}
     </div>
