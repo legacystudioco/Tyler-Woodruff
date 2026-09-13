@@ -75,7 +75,9 @@ export const heroArtifacts: HeroArtifact[] = [
     depth: 1.15,
     z: 6,
     drift: { x: 3, y: -6, rot: 0.3, duration: 11 },
-    featured: { top: "52%", left: "78%", scale: 0.7 },
+    // Already the right size by default — featured only moves/straightens/brings it forward,
+    // it never scales up or down (scale: 1 keeps it identical to its default rendered size).
+    featured: { top: "52%", left: "78%", scale: 1 },
     delay: 0,
     projectHref: "#life-change",
     cta: "View Project",

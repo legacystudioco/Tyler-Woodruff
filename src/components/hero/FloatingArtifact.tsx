@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { HeroArtifact } from "@/data/heroArtifacts";
 import ResponsiveMedia from "@/components/ui/ResponsiveMedia";
@@ -71,12 +72,22 @@ export default function FloatingArtifact({ artifact, ready }: { artifact: HeroAr
   const isSelected = selectedId === artifact.id;
   const isDimmed = selectedId !== null && !isSelected;
 
+  const [isHovered, setIsHovered] = useState(false);
+
   const depth = Math.min(artifact.depth, 1.1);
-  // Media reads as opaque artwork inside a glass surface, not a translucent image — depth still
-  // recedes distant panels slightly, but never enough to let a card behind bleed through one in
-  // front of it. The glass border/blur/sheen (GlassSurface, ArtifactFrame) carry the "glass" feel.
-  const baseOpacity = Math.min(1, 0.86 + depth * 0.14);
+  // Media stays strong and readable (~0.92–0.97) — just shy of fully solid, so the card still
+  // reads as a touch of holographic glass rather than a flat opaque cutout. It never dips low
+  // enough to let a card behind show through; the opaque backing plate (ArtifactFrame) already
+  // handles the source images' own alpha channels separately.
+  const baseOpacity = Math.min(0.97, 0.9 + depth * 0.07);
   const baseScale = 0.8 + depth * 0.17;
+
+  // Faint lime edge-light on every card, carried entirely by the outer box-shadow (not a border
+  // tint or image wash) so it never reads as neon. Restrained hierarchy: default < hover <
+  // featured — Live/Experience gets no special boost just because its imagery is already green.
+  const glowAlpha = isSelected ? 0.1 : isHovered ? 0.09 : 0.06;
+  const glowRadius = isSelected ? 22 : isHovered ? 20 : 16;
+  const glowShadow = `0 0 ${glowRadius}px rgba(199,255,0,${glowAlpha})`;
 
   const scale = isSelected ? baseScale * artifact.featured.scale : isDimmed ? baseScale * DIMMED_SCALE : baseScale;
   const opacity = isSelected ? FEATURED_OPACITY : isDimmed ? baseOpacity * DIMMED_OPACITY_FACTOR : baseOpacity;
@@ -156,19 +167,23 @@ export default function FloatingArtifact({ artifact, ready }: { artifact: HeroAr
             aria-label={`${artifact.label} — press to feature this project`}
             onClick={handleSelect}
             onKeyDown={handleKeyDown}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocus={() => setIsHovered(true)}
+            onBlur={() => setIsHovered(false)}
             className="group h-full w-full cursor-pointer rounded-2xl outline-none transition-[transform,filter] duration-300 ease-out hover:scale-[1.045] hover:brightness-110 focus-visible:scale-[1.045] focus-visible:brightness-110 focus-visible:ring-2 focus-visible:ring-signal/70"
           >
             {artifact.anchor ? (
               <GlassSurface
                 className="h-full w-full !rounded-xl transition-shadow duration-300 group-hover:ring-1 group-hover:ring-white/25"
-                style={{ boxShadow: "0 30px 70px rgba(0,0,0,0.5), 0 0 40px rgba(199,255,0,0.05)" }}
+                style={{ boxShadow: `0 30px 70px rgba(0,0,0,0.5), ${glowShadow}` }}
               >
                 <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} />
               </GlassSurface>
             ) : (
               <div
                 className="relative h-full w-full overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-[2px] transition-shadow duration-300 group-hover:border-white/25"
-                style={{ boxShadow: "0 20px 45px rgba(0,0,0,0.4), 0 0 24px rgba(255,255,255,0.04)" }}
+                style={{ boxShadow: `0 20px 45px rgba(0,0,0,0.4), ${glowShadow}` }}
               >
                 <ArtifactFrame artifact={artifact} ready={ready} isSelected={isSelected} />
               </div>
