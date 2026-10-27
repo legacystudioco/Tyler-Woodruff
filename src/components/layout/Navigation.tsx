@@ -72,6 +72,7 @@ export default function Navigation() {
             <li key={item.href}>
               <Link
                 href={item.href}
+                download={item.download}
                 className="relative py-1 opacity-80 transition-opacity hover:opacity-100"
               >
                 {item.label}
@@ -111,7 +112,7 @@ export default function Navigation() {
           <ul className="flex flex-col gap-6 font-display text-3xl">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} onClick={() => setMenuOpen(false)}>
+                <Link href={item.href} download={item.download} onClick={() => setMenuOpen(false)}>
                   {item.label}
                 </Link>
               </li>

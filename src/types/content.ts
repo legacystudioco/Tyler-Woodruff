@@ -3,6 +3,7 @@ export type Theme = "ink" | "paper";
 export type NavItem = {
   label: string;
   href: string;
+  download?: boolean;
 };
 
 export type MediaAsset = {

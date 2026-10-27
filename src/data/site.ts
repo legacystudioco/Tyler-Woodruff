@@ -3,7 +3,7 @@ import type { NavItem } from "@/types/content";
 export const nav: NavItem[] = [
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Résumé", href: "/resume" },
+  { label: "Résumé", href: "/Tyler_Woodruff_Resume.pdf", download: true },
 ];
 
 export const hero = {
@@ -28,10 +28,10 @@ export const contact = {
   location: "Cincinnati–Dayton, Ohio",
   preference: "Remote opportunities",
   linkedin: null as string | null,
-  resumeHref: "/resume",
+  resumeHref: "/Tyler_Woodruff_Resume.pdf",
 };
 
-export const resumeAssetPath = "/resume/tyler-woodruff-resume.pdf";
+export const resumeAssetPath = "/Tyler_Woodruff_Resume.pdf";
 
 export const openTo = {
   roleFamilies: [

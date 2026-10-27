@@ -58,6 +58,7 @@ export default function ContactSection() {
 
           <Link
             href={contact.resumeHref}
+            download
             className="inline-flex items-center gap-2 rounded-full border border-paper/25 px-6 py-4 font-mono text-xs uppercase tracking-wider text-paper transition-colors duration-300 hover:border-paper"
           >
             Résumé
