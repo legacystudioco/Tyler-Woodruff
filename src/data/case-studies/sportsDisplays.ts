@@ -6,10 +6,10 @@ export const sportsAssets = {
   footballBuilder: { type: "image" as const, src: `${base}/football-builder.jpg`, alt: "Football display builder" },
   basketballBuilder: { type: "image" as const, src: `${base}/basketball-builder.jpg`, alt: "Basketball display builder" },
   customizationControls: { type: "image" as const, src: `${base}/customization-controls.jpg`, alt: "Customization controls" },
-  modeling: { type: "image" as const, src: `${base}/modeling.jpg`, alt: "3D modeling process" },
-  testing: { type: "image" as const, src: `${base}/testing.jpg`, alt: "Testing checklist" },
-  physicalProduct: { type: "image" as const, src: `${base}/physical-product.jpg`, alt: "Finished physical display" },
-  printing: { type: "image" as const, src: `${base}/printing.jpg`, alt: "Printing process" },
+  modelingConcept: { type: "image" as const, src: `${base}/modeling-concept.jpg`, alt: "3D concept render of a custom Buckeyes jersey display, before printing" },
+  raidersBust: { type: "image" as const, src: `${base}/raiders-bust.jpg`, alt: "Finished Las Vegas Raiders jersey display, 3D-printed" },
+  bearsTriple: { type: "image" as const, src: `${base}/bears-triple.jpg`, alt: "Finished Chicago Bears three-jersey display, 3D-printed" },
+  buckeyesCompleted: { type: "image" as const, src: `${base}/buckeyes-completed.jpg`, alt: "Finished custom Ohio State Buckeyes jersey display, 3D-printed" },
 };
 
 export const video = {
@@ -25,8 +25,9 @@ export const stackItems: StackItem[] = [
   { id: "mobile", chrome: "mobile", screen: "config", label: "Mobile Preview", accent: "signal", top: "78%", left: "18%", width: 140, height: 210, rotate: -4, z: 5 },
 ];
 
-export const behindTheBuild = [
-  { id: "modeling", title: "3D Modeling", body: "Physical product geometry translated into a web-ready 3D asset.", screen: "wireframe" as const, media: sportsAssets.modeling },
-  { id: "config", title: "Configuration Logic", body: "Rules distinguishing template recolors from true custom builds.", screen: "config" as const, media: undefined },
-  { id: "testing", title: "Testing", body: "Cross-device checks on rendering, pricing logic, and export accuracy.", screen: "checklist" as const, media: sportsAssets.testing },
+export const physicalResults = [
+  { id: "modeling", label: "3D Concept Render", media: sportsAssets.modelingConcept },
+  { id: "buckeyes", label: "Custom Buckeyes Display", media: sportsAssets.buckeyesCompleted },
+  { id: "raiders", label: "Raiders Jersey Display", media: sportsAssets.raidersBust },
+  { id: "bears", label: "Bears Three-Jersey Display", media: sportsAssets.bearsTriple },
 ];

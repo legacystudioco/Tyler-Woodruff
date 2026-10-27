@@ -2,8 +2,7 @@ import type { NavItem } from "@/types/content";
 
 export const nav: NavItem[] = [
   { label: "Work", href: "#work" },
-  { label: "About", href: "#im-tyler" },
-  { label: "Lab", href: "#lab" },
+  { label: "About", href: "#about" },
   { label: "Résumé", href: "/resume" },
 ];
 
@@ -11,9 +10,9 @@ export const hero = {
   kicker: "Tyler Woodruff",
   headline: ["Creative", "Technologist."],
   body: "I design and build digital products, intelligent systems, brands, and experiences—taking ideas from concept to working reality.",
-  location: "Based in Ohio · Working everywhere",
+  location: "Cincinnati–Dayton, Ohio · Open to remote opportunities",
   primaryCta: { label: "Explore My Work", href: "#work" },
-  secondaryCta: { label: "About Me", href: "#im-tyler" },
+  secondaryCta: { label: "About Me", href: "#about" },
   status: "Available for select opportunities",
 };
 
@@ -25,6 +24,22 @@ export const intro = {
 
 export const contact = {
   email: "pastor.tyler.woodruff@gmail.com",
+  phone: "(513) 600-8006",
+  location: "Cincinnati–Dayton, Ohio",
+  preference: "Remote opportunities",
   linkedin: null as string | null,
   resumeHref: "/resume",
+};
+
+export const resumeAssetPath = "/resume/tyler-woodruff-resume.pdf";
+
+export const openTo = {
+  roleFamilies: [
+    "Creative Technologist",
+    "Senior Creative Technologist",
+    "Design Technologist",
+    "Creative Developer",
+    "Product Designer / Developer",
+  ],
+  interestAreas: ["AI products", "creative technology", "interactive experiences", "innovation labs", "experience design"],
 };

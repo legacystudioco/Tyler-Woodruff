@@ -5,11 +5,17 @@ import ProjectMedia from "@/components/ui/ProjectMedia";
 import EliteHomeSourcesStudy from "./EliteHomeSourcesStudy";
 import SportsDisplaysStudy from "./SportsDisplaysStudy";
 import MinistryLinkerStudy from "./MinistryLinkerStudy";
+import KingdomConferenceStudy from "./KingdomConferenceStudy";
+import HiVibeStudy from "./HiVibeStudy";
+import RiverOfLifeStudy from "./RiverOfLifeStudy";
 
 const studyComponents: Record<string, React.ComponentType> = {
-  "elite-home-sources": EliteHomeSourcesStudy,
+  "kingdom-conference": KingdomConferenceStudy,
   "3d-sports-displays": SportsDisplaysStudy,
+  "hi-vibe": HiVibeStudy,
+  "elite-home-sources": EliteHomeSourcesStudy,
   "ministry-linker": MinistryLinkerStudy,
+  "river-of-life": RiverOfLifeStudy,
 };
 
 const accentVar: Record<NonNullable<Project["accent"]>, string> = {

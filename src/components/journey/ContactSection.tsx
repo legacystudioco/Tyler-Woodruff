@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight, Mail, Phone } from "lucide-react";
 import Section from "@/components/ui/Section";
-import { contact } from "@/data/site";
+import { contact, openTo } from "@/data/site";
 
 export default function ContactSection() {
   const mailHref = `mailto:${contact.email}`;
+  const telHref = `tel:${contact.phone.replace(/[^+\d]/g, "")}`;
 
   return (
     <Section id="contact" theme="ink" className="grain flex flex-col justify-between pb-16 pt-28 lg:pt-36">
@@ -13,7 +14,10 @@ export default function ContactSection() {
 
         <p className="max-w-lg text-balance text-lg leading-relaxed text-mist lg:text-xl">
           I&rsquo;m always interested in ambitious ideas, difficult problems, and work that doesn&rsquo;t fit neatly
-          into one category.
+          into one category—particularly around {openTo.interestAreas.join(", ")}.
+        </p>
+        <p className="font-mono text-xs uppercase leading-loose tracking-wider text-mist/50">
+          {openTo.roleFamilies.join("  ·  ")}
         </p>
 
         <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -33,6 +37,14 @@ export default function ContactSection() {
             {contact.email}
           </Link>
 
+          <Link
+            href={telHref}
+            className="group inline-flex items-center gap-2 rounded-full border border-paper/25 px-6 py-4 font-mono text-xs uppercase tracking-wider text-paper transition-colors duration-300 hover:border-paper"
+          >
+            <Phone className="h-3.5 w-3.5" />
+            {contact.phone}
+          </Link>
+
           {contact.linkedin ? (
             <Link
               href={contact.linkedin}
@@ -48,9 +60,13 @@ export default function ContactSection() {
             href={contact.resumeHref}
             className="inline-flex items-center gap-2 rounded-full border border-paper/25 px-6 py-4 font-mono text-xs uppercase tracking-wider text-paper transition-colors duration-300 hover:border-paper"
           >
-            Download Résumé
+            Résumé
           </Link>
         </div>
+
+        <p className="font-mono text-[11px] uppercase tracking-widest text-mist/50">
+          {contact.location} · {contact.preference}
+        </p>
       </div>
 
       <Footer />
@@ -76,7 +92,7 @@ function Footer() {
           TYLER WOODRUFF<span className="text-signal">.</span>
         </p>
         <div className="flex flex-col gap-2 font-mono text-[11px] uppercase tracking-widest text-mist/50 sm:flex-row sm:items-center sm:justify-between">
-          <span>Creative Technologist — Ohio</span>
+          <span>Creative Technologist — Cincinnati–Dayton, Ohio</span>
           <span>&copy; {new Date().getFullYear()} Tyler Woodruff</span>
         </div>
       </div>

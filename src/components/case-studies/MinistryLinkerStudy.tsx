@@ -1,19 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import Eyebrow from "@/components/ui/Eyebrow";
 import DisplayHeading from "@/components/ui/DisplayHeading";
-import ProductStack from "./shared/ProductStack";
+import ScreenshotGrid from "./shared/ScreenshotGrid";
 import InteractionModel from "./shared/InteractionModel";
-import ArchitectureDiagram from "./shared/ArchitectureDiagram";
 import { stackItems, productStory } from "@/data/case-studies/ministryLinker";
 
 export default function MinistryLinkerStudy() {
   return (
     <div className="flex flex-col gap-28 lg:gap-40">
-      <section id="visual-opening" className="flex flex-col gap-10">
-        <ProductStack items={stackItems} />
+      <section id="ministry-visual-opening" className="flex flex-col gap-10">
+        <ScreenshotGrid items={stackItems} />
       </section>
 
-      <section id="product-story" className="flex flex-col items-center gap-8">
+      <section id="ministry-product-story" className="flex flex-col items-center gap-8">
         <Eyebrow tone="electric">Product Story</Eyebrow>
         <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-3">
           {productStory.map((step, i) => (
@@ -27,7 +26,7 @@ export default function MinistryLinkerStudy() {
         </div>
       </section>
 
-      <section id="interaction-model" className="flex flex-col items-center gap-10">
+      <section id="ministry-interaction-model" className="flex flex-col items-center gap-10">
         <div className="flex flex-col items-center gap-4 text-center">
           <Eyebrow tone="heat">Interaction Model</Eyebrow>
           <DisplayHeading size="md" as="h3">
@@ -35,16 +34,6 @@ export default function MinistryLinkerStudy() {
           </DisplayHeading>
         </div>
         <InteractionModel />
-      </section>
-
-      <section id="architecture" className="flex flex-col items-center gap-10">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Eyebrow tone="electric">Technical Architecture</Eyebrow>
-          <DisplayHeading size="md" as="h3">
-            A straightforward, well-bounded system.
-          </DisplayHeading>
-        </div>
-        <ArchitectureDiagram />
       </section>
     </div>
   );

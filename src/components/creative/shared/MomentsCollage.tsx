@@ -16,7 +16,7 @@ export type MomentItem = {
 export default function MomentsCollage({ items }: { items: MomentItem[] }) {
   return (
     <>
-      <div className="relative hidden h-[560px] w-full lg:block">
+      <div className="relative hidden h-[760px] w-full lg:block">
         {items.map((item) => (
           <div
             key={item.id}
@@ -30,7 +30,7 @@ export default function MomentsCollage({ items }: { items: MomentItem[] }) {
               transform: `translate(-50%, -50%) rotate(${item.rotate ?? 0}deg)`,
             }}
           >
-            <ProjectMedia media={item.media} label={item.label} accent="heat" sizes="(min-width: 1024px) 30vw, 90vw" />
+            <ProjectMedia media={item.media} label={item.label} accent="heat" sizes="(min-width: 1024px) 40vw, 90vw" />
           </div>
         ))}
       </div>

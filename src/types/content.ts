@@ -31,5 +31,6 @@ export type Project = {
 export type Capability = {
   id: string;
   title: string;
+  tagline: string;
   items: string[];
 };

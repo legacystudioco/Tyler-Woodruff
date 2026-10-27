@@ -6,16 +6,16 @@ import Tag from "@/components/ui/Tag";
 import { cn } from "@/lib/utils";
 
 const layoutClasses: Record<Project["layout"], string> = {
-  large: "lg:col-span-8 lg:row-span-2",
-  tall: "lg:col-span-4 lg:row-span-2",
+  large: "lg:col-span-8 lg:row-span-2 lg:min-h-[700px]",
+  tall: "lg:col-span-4 lg:row-span-2 lg:min-h-[620px]",
   wide: "lg:col-span-8",
   standard: "lg:col-span-7",
   feature: "lg:col-span-5",
 };
 
 const mediaHeightClasses: Record<Project["layout"], string> = {
-  large: "min-h-[360px] sm:min-h-[440px] lg:min-h-full",
-  tall: "min-h-[420px] lg:min-h-full",
+  large: "min-h-[360px] sm:min-h-[440px] lg:min-h-[480px]",
+  tall: "min-h-[420px] lg:min-h-[440px]",
   wide: "min-h-[300px] sm:min-h-[360px]",
   standard: "min-h-[280px] sm:min-h-[320px]",
   feature: "min-h-[280px]",
@@ -36,12 +36,12 @@ const accentText: Record<NonNullable<Project["accent"]>, string> = {
 };
 
 const inlineSectionIds = new Set([
-  "elite-home-sources",
+  "kingdom-conference",
   "3d-sports-displays",
+  "hi-vibe",
+  "elite-home-sources",
   "ministry-linker",
-  "life-change",
-  "visual-work",
-  "lab",
+  "river-of-life",
 ]);
 
 export default function ProjectEntry({ project }: { project: Project }) {

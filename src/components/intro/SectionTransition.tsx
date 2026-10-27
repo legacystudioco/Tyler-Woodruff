@@ -10,14 +10,14 @@ export default function SectionTransition() {
           style={{ clipPath: "inset(0 0 50% 0)" }}
           aria-hidden
         >
-          02
+          01
         </span>
         <span
           className="absolute font-display text-[22vw] font-semibold leading-none tracking-tight text-ink sm:text-[20vw] lg:text-[13vw]"
           style={{ clipPath: "inset(50% 0 0 0)" }}
           aria-hidden
         >
-          02
+          01
         </span>
       </div>
       <div className="absolute left-6 top-[20%] -translate-y-1/2 font-mono text-[10px] uppercase tracking-widest text-mist/60 lg:left-12 lg:top-[27%]">

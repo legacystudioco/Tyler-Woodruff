@@ -1,57 +1,38 @@
-import type { MediaAsset } from "@/types/content";
-
 export type CapabilityGroup = {
   id: string;
   title: string;
   items: string[];
-  image: MediaAsset;
 };
-
-const base = "/assets/workspace";
 
 export const capabilityGroups: CapabilityGroup[] = [
   {
-    id: "product",
-    title: "Product",
-    items: ["Product strategy", "UX architecture", "User journeys", "Prototyping", "Systems thinking", "Business logic"],
-    image: { type: "image", src: `${base}/product.jpg`, alt: "Product strategy work" },
+    id: "development",
+    title: "Development & Deployment",
+    items: ["HTML", "CSS", "JavaScript", "Liquid", "Next.js", "Electron", "Swift", "SwiftUI", "UIKit", "GitHub", "Vercel", "VS Code"],
+  },
+  {
+    id: "commerce",
+    title: "Commerce & Customer Systems",
+    items: ["Shopify", "Klaviyo", "Stripe"],
+  },
+  {
+    id: "data",
+    title: "Data & Backend",
+    items: ["Supabase", "Firebase"],
   },
   {
     id: "creative",
-    title: "Creative",
-    items: ["Creative direction", "Brand identity", "Visual design", "Storytelling", "Content systems", "Experience design"],
-    image: { type: "image", src: `${base}/creative.jpg`, alt: "Creative direction work" },
+    title: "Creative & Fabrication",
+    items: ["Illustrator", "Photoshop", "Premiere Pro", "Blender", "3D Modeling", "3D Printing", "Video Production", "Visual Identity Design"],
   },
   {
-    id: "technology",
-    title: "Technology",
-    items: ["Web development", "iOS development", "AI integration", "Automation", "APIs", "Databases", "Cloud deployment"],
-    image: { type: "image", src: `${base}/technology.jpg`, alt: "Technology work" },
+    id: "live",
+    title: "Live Production",
+    items: ["ProPresenter", "Lightkey", "Live Sound Mixing", "MIDI Programming", "Lighting Design", "Stage & Screen Production"],
   },
   {
-    id: "experience",
-    title: "Experience",
-    items: ["Interactive experiences", "Live production", "AV systems", "Lighting", "Stage environments", "Physical/digital integration"],
-    image: { type: "image", src: `${base}/experience.jpg`, alt: "Live experience production" },
+    id: "core",
+    title: "Core Capabilities",
+    items: ["Product Strategy", "UX/UI", "Prototyping", "Workflow Automation", "AI-Assisted Development", "Creative Direction"],
   },
-];
-
-export const tools = [
-  "Illustrator",
-  "Photoshop",
-  "Premiere Pro",
-  "After Effects",
-  "Lightroom",
-  "Xcode",
-  "Swift",
-  "SwiftUI",
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Tailwind CSS",
-  "Supabase",
-  "GitHub",
-  "Vercel",
-  "Claude",
-  "ChatGPT",
 ];

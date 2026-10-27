@@ -79,7 +79,7 @@ export const heroArtifacts: HeroArtifact[] = [
     // it never scales up or down (scale: 1 keeps it identical to its default rendered size).
     featured: { top: "52%", left: "78%", scale: 1 },
     delay: 0,
-    projectHref: "#life-change",
+    projectHref: "#kingdom-conference",
     cta: "View Project",
     anchor: true,
     showOnMobile: true,
@@ -134,7 +134,7 @@ export const heroArtifacts: HeroArtifact[] = [
     drift: { x: 4, y: -5, rot: 0.4, duration: 13 },
     featured: { top: "48%", left: "76%", scale: 1.3 },
     delay: 0.3,
-    projectHref: "#visual-work",
+    projectHref: "#hi-vibe",
     cta: "Explore Work",
   },
   {
@@ -182,11 +182,17 @@ export const heroArtifacts: HeroArtifact[] = [
     cta: "Explore Work",
   },
   {
-    id: "code",
-    variant: "code",
-    label: "Code",
+    id: "hi-vibe-brand",
+    variant: "ui",
+    label: "Brand / Storefront",
     meta: "Fig. 06",
-    media: { type: "image", src: "/assets/hero/code.jpg", alt: "Code artifact" },
+    media: {
+      type: "image",
+      src: "/assets/hi-vibe/storefront-home.jpg",
+      alt: "HI-VIBE Shopify storefront hero",
+      fit: "cover",
+      position: "center",
+    },
     width: 190,
     height: 130,
     top: "82%",
@@ -197,7 +203,7 @@ export const heroArtifacts: HeroArtifact[] = [
     drift: { x: 6, y: 5, rot: -0.6, duration: 7.5 },
     featured: { top: "58%", left: "62%", scale: 2.6 },
     delay: 1.1,
-    projectHref: "#ministry-linker",
+    projectHref: "#hi-vibe",
     cta: "Explore Work",
   },
   {

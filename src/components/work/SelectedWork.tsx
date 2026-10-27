@@ -1,6 +1,8 @@
+import { Fragment } from "react";
 import Section from "@/components/ui/Section";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ProjectEntry from "./ProjectEntry";
+import ConnectiveStatement from "./ConnectiveStatement";
 import { projects } from "@/data/projects";
 
 export default function SelectedWork() {
@@ -15,8 +17,11 @@ export default function SelectedWork() {
         />
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-12 lg:auto-rows-[minmax(220px,auto)] lg:gap-x-10 lg:gap-y-12">
-          {projects.map((project) => (
-            <ProjectEntry key={project.id} project={project} />
+          {projects.map((project, i) => (
+            <Fragment key={project.id}>
+              <ProjectEntry project={project} />
+              {i === 2 ? <ConnectiveStatement /> : null}
+            </Fragment>
           ))}
         </div>
       </div>

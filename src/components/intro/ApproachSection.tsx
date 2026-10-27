@@ -6,7 +6,7 @@ import { intro } from "@/data/site";
 
 export default function ApproachSection() {
   return (
-    <Section theme="ink" className="border-t border-white/10 py-28 lg:py-36">
+    <Section id="how-i-work" theme="ink" className="border-t border-white/10 py-28 lg:py-36">
       <div className="mx-auto flex max-w-[1600px] flex-col gap-20 px-6 lg:px-12">
         <div className="flex flex-col gap-6 lg:max-w-3xl">
           <Eyebrow>{intro.eyebrow}</Eyebrow>

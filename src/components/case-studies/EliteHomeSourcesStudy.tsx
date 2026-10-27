@@ -1,29 +1,21 @@
 import Eyebrow from "@/components/ui/Eyebrow";
 import DisplayHeading from "@/components/ui/DisplayHeading";
-import ProductStack from "./shared/ProductStack";
+import ScreenshotGrid from "./shared/ScreenshotGrid";
 import SystemFlow from "./shared/SystemFlow";
-import AnnotatedInterface from "./shared/AnnotatedInterface";
-import {
-  stackItems,
-  problemItems,
-  designedItems,
-  builtAnnotations,
-  systemFlow,
-  eliteAssets,
-} from "@/data/case-studies/eliteHomeSources";
+import { stackItems, problemItems, designedItems, systemFlow } from "@/data/case-studies/eliteHomeSources";
 
 export default function EliteHomeSourcesStudy() {
   return (
     <div className="flex flex-col gap-28 lg:gap-40">
-      <section id="visual-opening" className="flex flex-col gap-10">
+      <section id="elite-visual-opening" className="flex flex-col gap-10">
         <p className="mx-auto max-w-lg text-balance text-center text-lg italic leading-relaxed text-mist">
           &ldquo;What if the website wasn&rsquo;t just marketing&mdash;but the front door to the entire
           operation?&rdquo;
         </p>
-        <ProductStack items={stackItems} />
+        <ScreenshotGrid items={stackItems} />
       </section>
 
-      <section id="system" className="flex flex-col items-center gap-10">
+      <section id="elite-system" className="flex flex-col items-center gap-10">
         <div className="flex flex-col items-center gap-4 text-center">
           <Eyebrow>The System</Eyebrow>
           <DisplayHeading size="md" as="h3">
@@ -33,7 +25,7 @@ export default function EliteHomeSourcesStudy() {
         <SystemFlow steps={systemFlow} accent="signal" />
       </section>
 
-      <section id="problem" className="grid gap-14 lg:grid-cols-2 lg:gap-10">
+      <section id="elite-problem" className="grid gap-14 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col gap-5">
           <Eyebrow tone="heat">Problem</Eyebrow>
           <p className="text-balance text-xl leading-relaxed text-paper lg:text-2xl">
@@ -58,23 +50,6 @@ export default function EliteHomeSourcesStudy() {
             ))}
           </ul>
         </div>
-      </section>
-
-      <section id="built" className="flex flex-col items-center gap-10">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Eyebrow>What I Built</Eyebrow>
-          <DisplayHeading size="md" as="h3">
-            An appointment record that carries the whole job.
-          </DisplayHeading>
-        </div>
-        <AnnotatedInterface
-          chrome="browser"
-          screen="detail"
-          label="Appointment Detail"
-          media={eliteAssets.appointmentDetail}
-          accent="signal"
-          annotations={builtAnnotations}
-        />
       </section>
     </div>
   );
