@@ -8,13 +8,6 @@ export const riverAssets = {
   exportScreen: { type: "image" as const, src: `${base}/export-screen.jpg`, alt: "Video export screen" },
 };
 
-export const exportVideo = {
-  type: "video" as const,
-  src: `${base}/export-demo.mp4`,
-  poster: `${base}/export-demo-poster.jpg`,
-  alt: "River of Life import-to-export demonstration",
-};
-
 export const pipeline: FlowStep[] = [
   { label: "Import Song" },
   { label: "Review Timing" },
