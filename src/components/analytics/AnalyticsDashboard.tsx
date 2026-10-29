@@ -1,5 +1,21 @@
-import { cn } from "@/lib/utils";
-import { HUMAN_THRESHOLD, type DashboardData } from "@/lib/analytics/queries";
+import type { DashboardData } from "@/lib/analytics/queries";
+import {
+  BarRow,
+  Empty,
+  HumanScore,
+  Panel,
+  Toggle,
+  duration,
+  locationKey,
+  number,
+  pageLabel,
+  percent,
+  place,
+  plural,
+  sectionLabel,
+  when,
+  type Row,
+} from "./ui";
 
 type Props = {
   base: string;
@@ -7,44 +23,10 @@ type Props = {
   ranges: number[];
   humansOnly: boolean;
   data: DashboardData | null;
+  // Extra query kept on the range/audience toggles (e.g. "&loc=..." on a detail view).
+  extraQuery?: string;
+  detail?: React.ReactNode;
 };
-
-type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-const number = new Intl.NumberFormat("en-US");
-
-function duration(ms: number) {
-  const seconds = Math.round(ms / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}m ${String(seconds % 60).padStart(2, "0")}s`;
-}
-
-function plural(count: number, word: string) {
-  return `${number.format(count)} ${word}${count === 1 ? "" : "s"}`;
-}
-
-function percent(part: number, total: number) {
-  return total ? Math.round((part / total) * 100) : 0;
-}
-
-function place(row: Row) {
-  if (!row.city && !row.region) return row.country ?? "Unknown";
-  const area = row.country && row.country !== "US" ? row.country : row.region;
-  return [row.city, area].filter(Boolean).join(", ");
-}
-
-function sectionLabel(section: string) {
-  return section
-    .split("/")
-    .map((part) => part.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
-    .join(" › ");
-}
-
-function pageLabel(path: string) {
-  if (path === "/") return "Home";
-  return path.replace(/^\/work\//, "Work · ").replace(/^\//, "");
-}
 
 function rangeLabel(days: number) {
   return days === 1 ? "24 hours" : `${days} days`;
@@ -62,77 +44,9 @@ function fillDays(rows: Row[], days: number) {
   return result;
 }
 
-function HumanScore({ score }: { score: number | null }) {
-  if (score === null) {
-    return <span className="text-mist/60">Not scored</span>;
-  }
-  const label = score >= 70 ? "Human" : score >= HUMAN_THRESHOLD ? "Likely human" : score >= 25 ? "Unsure" : "Bot";
-  const tone =
-    score >= 70
-      ? "border-signal/40 text-signal"
-      : score >= HUMAN_THRESHOLD
-        ? "border-paper/30 text-paper"
-        : score >= 25
-          ? "border-[#ffb347]/40 text-[#ffb347]"
-          : "border-[#ff8a7a]/40 text-[#ff8a7a]";
-  return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[11px]", tone)}>
-      {score}% · {label}
-    </span>
-  );
-}
-
-function Toggle({ options }: { options: { label: string; href: string; active: boolean }[] }) {
-  return (
-    <nav className="flex rounded-full border border-white/15 p-1 font-mono text-[11px] uppercase tracking-wider">
-      {options.map((option) => (
-        <a
-          key={option.label}
-          href={option.href}
-          className={cn(
-            "rounded-full px-3 py-1.5 transition-colors",
-            option.active ? "bg-paper text-ink" : "text-mist hover:text-paper",
-          )}
-        >
-          {option.label}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
-function Panel({ title, note, children, className }: { title: string; note?: string; children: React.ReactNode; className?: string }) {
-  return (
-    <section className={cn("flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6", className)}>
-      <header className="flex flex-col gap-1">
-        <h2 className="font-mono text-[11px] uppercase tracking-widest text-signal">{title}</h2>
-        {note ? <p className="text-sm text-mist">{note}</p> : null}
-      </header>
-      {children}
-    </section>
-  );
-}
-
-function Empty({ children = "No data in this range yet." }: { children?: React.ReactNode }) {
-  return <p className="text-sm text-mist/70">{children}</p>;
-}
-
-function BarRow({ label, value, max, detail }: { label: string; value: number; max: number; detail: string }) {
-  return (
-    <li className="flex flex-col gap-1.5">
-      <div className="flex items-baseline justify-between gap-4 text-sm">
-        <span className="truncate text-paper">{label}</span>
-        <span className="shrink-0 font-mono text-xs text-mist">{detail}</span>
-      </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-signal" style={{ width: `${Math.max(2, percent(value, max))}%` }} />
-      </div>
-    </li>
-  );
-}
-
-export default function AnalyticsDashboard({ base, days, ranges, humansOnly, data }: Props) {
+export default function AnalyticsDashboard({ base, days, ranges, humansOnly, data, extraQuery = "", detail }: Props) {
   const audience = humansOnly ? "" : "&all=1";
+  const query = `d=${days}${audience}`;
 
   return (
     <main className="min-h-screen bg-ink px-4 py-10 text-paper sm:px-8 lg:px-12">
@@ -145,14 +59,14 @@ export default function AnalyticsDashboard({ base, days, ranges, humansOnly, dat
           <div className="flex flex-wrap items-center gap-3">
             <Toggle
               options={[
-                { label: "People", href: `${base}?d=${days}`, active: humansOnly },
-                { label: "Everyone", href: `${base}?d=${days}&all=1`, active: !humansOnly },
+                { label: "People", href: `${base}?d=${days}${extraQuery}`, active: humansOnly },
+                { label: "Everyone", href: `${base}?d=${days}&all=1${extraQuery}`, active: !humansOnly },
               ]}
             />
             <Toggle
               options={ranges.map((range) => ({
                 label: range === 1 ? "24h" : `${range}d`,
-                href: `${base}?d=${range}${audience}`,
+                href: `${base}?d=${range}${audience}${extraQuery}`,
                 active: range === days,
               }))}
             />
@@ -164,7 +78,7 @@ export default function AnalyticsDashboard({ base, days, ranges, humansOnly, dat
           </div>
         </header>
 
-        {data ? <DashboardBody data={data} days={days} humansOnly={humansOnly} base={base} /> : <StorageMissing />}
+        {detail ?? (data ? <DashboardBody data={data} days={days} humansOnly={humansOnly} base={base} query={query} /> : <StorageMissing />)}
       </div>
     </main>
   );
@@ -187,11 +101,13 @@ function DashboardBody({
   days,
   humansOnly,
   base,
+  query,
 }: {
   data: DashboardData & {};
   days: number;
   humansOnly: boolean;
   base: string;
+  query: string;
 }) {
   const { summary, reach, sections, locations, pages, referrers, devices, recent, split } = data;
   const daily = fillDays(data.daily, days);
@@ -289,7 +205,10 @@ function DashboardBody({
           )}
         </Panel>
 
-        <Panel title="Where they are" note="City and state from the visitor's network. Never an exact address.">
+        <Panel
+          title="Where they are"
+          note="City and state from the visitor's network, never an exact address. Click a place to see who visited from there."
+        >
           {locations.length ? (
             <ul className="flex flex-col gap-4">
               {locations.slice(0, 10).map((row) => (
@@ -299,6 +218,7 @@ function DashboardBody({
                   value={row.visitors}
                   max={locations[0].visitors}
                   detail={`${plural(row.visitors, "viewer")} · ${plural(row.visits, "view")}`}
+                  href={`${base}?${query}&loc=${encodeURIComponent(locationKey(row))}`}
                 />
               ))}
             </ul>
@@ -394,7 +314,7 @@ function DashboardBody({
         </Panel>
       </div>
 
-      <Panel title="Recent visits" note="The latest 50 page views in this range.">
+      <Panel title="Recent visits" note="The latest 50 page views in this range. Click a time to see that visitor's full history.">
         {recent.length ? (
           <div className="-mx-6 overflow-x-auto px-6">
             <table className="w-full min-w-[900px] text-left text-sm">
@@ -410,19 +330,25 @@ function DashboardBody({
               <tbody>
                 {recent.map((row) => (
                   <tr key={row.id} className="border-b border-white/5 last:border-0">
-                    <td className="whitespace-nowrap py-2.5 pr-4 text-mist">
-                      {new Date(row.started_at).toLocaleString("en-US", {
-                        timeZone: "America/New_York",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
+                    <td className="whitespace-nowrap py-2.5 pr-4">
+                      <a
+                        href={`${base}?${query}&v=${row.visitor_id}`}
+                        className="text-paper underline-offset-4 hover:text-signal hover:underline"
+                      >
+                        {when(row.started_at)} →
+                      </a>
                     </td>
                     <td className="py-2.5 pr-4">
                       <HumanScore score={row.human_score} />
                     </td>
-                    <td className="whitespace-nowrap py-2.5 pr-4">{place(row)}</td>
+                    <td className="whitespace-nowrap py-2.5 pr-4">
+                      <a
+                        href={`${base}?${query}&loc=${encodeURIComponent(locationKey(row))}`}
+                        className="underline-offset-4 hover:text-signal hover:underline"
+                      >
+                        {place(row)}
+                      </a>
+                    </td>
                     <td className="whitespace-nowrap py-2.5 pr-4">{pageLabel(row.path)}</td>
                     <td className="py-2.5 pr-4 font-mono tabular-nums">{row.max_scroll}%</td>
                     <td className="py-2.5 pr-4 font-mono tabular-nums">{duration(row.active_ms)}</td>

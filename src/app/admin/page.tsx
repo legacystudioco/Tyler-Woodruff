@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminBasePath, isAdminConfigured, isAdminSession } from "@/lib/analytics/auth";
 import { isStorageConfigured } from "@/lib/analytics/db";
-import { loadDashboard } from "@/lib/analytics/queries";
+import { loadDashboard, loadLocation, loadVisitor, parseLocation } from "@/lib/analytics/queries";
 import AdminLogin from "@/components/analytics/AdminLogin";
 import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
+import { LocationView, VisitorView } from "@/components/analytics/DetailViews";
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -26,7 +27,38 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   const requested = Number(params.d);
   const days = RANGES.includes(requested) ? requested : 30;
   const humansOnly = params.all !== "1";
-  const data = isStorageConfigured() ? await loadDashboard(days, humansOnly) : null;
+  const query = `d=${days}${humansOnly ? "" : "&all=1"}`;
+  const shell = { base, days, ranges: RANGES, humansOnly };
 
-  return <AnalyticsDashboard base={base} days={days} ranges={RANGES} humansOnly={humansOnly} data={data} />;
+  if (isStorageConfigured() && typeof params.v === "string") {
+    const visitor = await loadVisitor(params.v);
+    if (visitor) {
+      return (
+        <AnalyticsDashboard
+          {...shell}
+          data={null}
+          extraQuery={`&v=${params.v}`}
+          detail={<VisitorView data={visitor} base={base} query={query} />}
+        />
+      );
+    }
+  }
+
+  const location = parseLocation(params.loc);
+  if (isStorageConfigured() && location) {
+    const located = await loadLocation(location, days, humansOnly);
+    if (located) {
+      return (
+        <AnalyticsDashboard
+          {...shell}
+          data={null}
+          extraQuery={`&loc=${encodeURIComponent(params.loc as string)}`}
+          detail={<LocationView data={located} base={base} query={query} />}
+        />
+      );
+    }
+  }
+
+  const data = isStorageConfigured() ? await loadDashboard(days, humansOnly) : null;
+  return <AnalyticsDashboard {...shell} data={data} />;
 }
