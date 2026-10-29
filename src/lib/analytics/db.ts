@@ -40,6 +40,8 @@ async function migrate(sql: Sql) {
       active_ms integer NOT NULL DEFAULT 0
     )`;
   await sql`CREATE INDEX IF NOT EXISTS visits_started_at_idx ON visits (started_at)`;
+  await sql`ALTER TABLE visits ADD COLUMN IF NOT EXISTS human_score smallint`;
+  await sql`ALTER TABLE visits ADD COLUMN IF NOT EXISTS signals jsonb`;
   await sql`
     CREATE TABLE IF NOT EXISTS section_views (
       visit_id text NOT NULL REFERENCES visits (id) ON DELETE CASCADE,

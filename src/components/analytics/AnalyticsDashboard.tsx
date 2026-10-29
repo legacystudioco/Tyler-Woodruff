@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import type { DashboardData } from "@/lib/analytics/queries";
+import { HUMAN_THRESHOLD, type DashboardData } from "@/lib/analytics/queries";
 
 type Props = {
   base: string;
   days: number;
   ranges: number[];
+  humansOnly: boolean;
   data: DashboardData | null;
 };
 
@@ -61,6 +62,45 @@ function fillDays(rows: Row[], days: number) {
   return result;
 }
 
+function HumanScore({ score }: { score: number | null }) {
+  if (score === null) {
+    return <span className="text-mist/60">Not scored</span>;
+  }
+  const label = score >= 70 ? "Human" : score >= HUMAN_THRESHOLD ? "Likely human" : score >= 25 ? "Unsure" : "Bot";
+  const tone =
+    score >= 70
+      ? "border-signal/40 text-signal"
+      : score >= HUMAN_THRESHOLD
+        ? "border-paper/30 text-paper"
+        : score >= 25
+          ? "border-[#ffb347]/40 text-[#ffb347]"
+          : "border-[#ff8a7a]/40 text-[#ff8a7a]";
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[11px]", tone)}>
+      {score}% · {label}
+    </span>
+  );
+}
+
+function Toggle({ options }: { options: { label: string; href: string; active: boolean }[] }) {
+  return (
+    <nav className="flex rounded-full border border-white/15 p-1 font-mono text-[11px] uppercase tracking-wider">
+      {options.map((option) => (
+        <a
+          key={option.label}
+          href={option.href}
+          className={cn(
+            "rounded-full px-3 py-1.5 transition-colors",
+            option.active ? "bg-paper text-ink" : "text-mist hover:text-paper",
+          )}
+        >
+          {option.label}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
 function Panel({ title, note, children, className }: { title: string; note?: string; children: React.ReactNode; className?: string }) {
   return (
     <section className={cn("flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6", className)}>
@@ -91,7 +131,9 @@ function BarRow({ label, value, max, detail }: { label: string; value: number; m
   );
 }
 
-export default function AnalyticsDashboard({ base, days, ranges, data }: Props) {
+export default function AnalyticsDashboard({ base, days, ranges, humansOnly, data }: Props) {
+  const audience = humansOnly ? "" : "&all=1";
+
   return (
     <main className="min-h-screen bg-ink px-4 py-10 text-paper sm:px-8 lg:px-12">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8">
@@ -101,20 +143,19 @@ export default function AnalyticsDashboard({ base, days, ranges, data }: Props) 
             <h1 className="font-display text-4xl font-semibold tracking-tight">Who&rsquo;s looking</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <nav className="flex rounded-full border border-white/15 p-1 font-mono text-[11px] uppercase tracking-wider">
-              {ranges.map((range) => (
-                <a
-                  key={range}
-                  href={`${base}?d=${range}`}
-                  className={cn(
-                    "rounded-full px-3 py-1.5 transition-colors",
-                    range === days ? "bg-paper text-ink" : "text-mist hover:text-paper",
-                  )}
-                >
-                  {range === 1 ? "24h" : `${range}d`}
-                </a>
-              ))}
-            </nav>
+            <Toggle
+              options={[
+                { label: "People", href: `${base}?d=${days}`, active: humansOnly },
+                { label: "Everyone", href: `${base}?d=${days}&all=1`, active: !humansOnly },
+              ]}
+            />
+            <Toggle
+              options={ranges.map((range) => ({
+                label: range === 1 ? "24h" : `${range}d`,
+                href: `${base}?d=${range}${audience}`,
+                active: range === days,
+              }))}
+            />
             <form method="post" action={`${base}/logout`}>
               <button className="rounded-full border border-white/15 px-4 py-2 font-mono text-[11px] uppercase tracking-wider text-mist transition-colors hover:border-paper hover:text-paper">
                 Sign out
@@ -123,7 +164,7 @@ export default function AnalyticsDashboard({ base, days, ranges, data }: Props) 
           </div>
         </header>
 
-        {data ? <DashboardBody data={data} days={days} /> : <StorageMissing />}
+        {data ? <DashboardBody data={data} days={days} humansOnly={humansOnly} base={base} /> : <StorageMissing />}
       </div>
     </main>
   );
@@ -141,8 +182,18 @@ function StorageMissing() {
   );
 }
 
-function DashboardBody({ data, days }: { data: DashboardData & {}; days: number }) {
-  const { summary, reach, sections, locations, pages, referrers, devices, recent } = data;
+function DashboardBody({
+  data,
+  days,
+  humansOnly,
+  base,
+}: {
+  data: DashboardData & {};
+  days: number;
+  humansOnly: boolean;
+  base: string;
+}) {
+  const { summary, reach, sections, locations, pages, referrers, devices, recent, split } = data;
   const daily = fillDays(data.daily, days);
   const dailyMax = Math.max(1, ...daily.map((d) => d.visits));
 
@@ -164,6 +215,26 @@ function DashboardBody({ data, days }: { data: DashboardData & {}; days: number 
 
   return (
     <>
+      <p className="-mt-2 text-sm leading-relaxed text-mist">
+        {humansOnly ? (
+          <>
+            Showing people only. {plural(split.automated, "visit")} in this range looked automated (link scanners,
+            crawlers) and {split.automated === 1 ? "is" : "are"} hidden.{" "}
+            {split.automated ? (
+              <a href={`${base}?d=${days}&all=1`} className="text-paper underline underline-offset-4 hover:text-signal">
+                Show everyone
+              </a>
+            ) : null}
+          </>
+        ) : (
+          <>
+            Showing every visit: {plural(split.humans, "visit")} from likely people and {plural(split.automated, "visit")}{" "}
+            that looked automated. The human score is an estimate based on mouse, scroll-wheel, touch and keyboard
+            activity.
+          </>
+        )}
+      </p>
+
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {[
           { label: "Unique viewers", value: number.format(summary.visitors) },
@@ -326,10 +397,10 @@ function DashboardBody({ data, days }: { data: DashboardData & {}; days: number 
       <Panel title="Recent visits" note="The latest 50 page views in this range.">
         {recent.length ? (
           <div className="-mx-6 overflow-x-auto px-6">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[900px] text-left text-sm">
               <thead className="font-mono text-[10px] uppercase tracking-widest text-mist">
                 <tr className="border-b border-white/10">
-                  {["When", "Location", "Page", "Scrolled", "Engaged", "Lingered on", "Device", "From"].map((h) => (
+                  {["When", "Human?", "Location", "Page", "Scrolled", "Engaged", "Lingered on", "Device", "From"].map((h) => (
                     <th key={h} className="py-2 pr-4 font-normal">
                       {h}
                     </th>
@@ -347,6 +418,9 @@ function DashboardBody({ data, days }: { data: DashboardData & {}; days: number 
                         hour: "numeric",
                         minute: "2-digit",
                       })}
+                    </td>
+                    <td className="py-2.5 pr-4">
+                      <HumanScore score={row.human_score} />
                     </td>
                     <td className="whitespace-nowrap py-2.5 pr-4">{place(row)}</td>
                     <td className="whitespace-nowrap py-2.5 pr-4">{pageLabel(row.path)}</td>

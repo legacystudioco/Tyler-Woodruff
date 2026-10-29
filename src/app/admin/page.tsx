@@ -25,7 +25,8 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
 
   const requested = Number(params.d);
   const days = RANGES.includes(requested) ? requested : 30;
-  const data = isStorageConfigured() ? await loadDashboard(days) : null;
+  const humansOnly = params.all !== "1";
+  const data = isStorageConfigured() ? await loadDashboard(days, humansOnly) : null;
 
-  return <AnalyticsDashboard base={base} days={days} ranges={RANGES} data={data} />;
+  return <AnalyticsDashboard base={base} days={days} ranges={RANGES} humansOnly={humansOnly} data={data} />;
 }

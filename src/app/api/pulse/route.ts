@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { getSql } from "@/lib/analytics/db";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/analytics/auth";
+import { humanScore, isDataCenterTown, parseSignals } from "@/lib/analytics/humanScore";
 
 const ID_PATTERN = /^[a-f0-9]{32}$/;
 const BOT_PATTERN = /bot|crawl|spider|slurp|preview|headless|lighthouse|vercel-screenshot|facebookexternalhit|embedly/i;
@@ -65,22 +66,28 @@ export async function POST(request: NextRequest) {
 
   const maxScroll = clampInt(body.maxScroll, 100);
   const activeMs = clampInt(body.activeMs, MAX_MS);
+  const city = geoHeader(request, "x-vercel-ip-city");
+  const region = geoHeader(request, "x-vercel-ip-country-region");
+  const signals = parseSignals(body.signals);
+  const score = humanScore(signals, userAgent, isDataCenterTown(city, region));
 
   await sql`
-    INSERT INTO visits (id, visitor_id, path, referrer, device, city, region, country, max_scroll, active_ms)
+    INSERT INTO visits (id, visitor_id, path, referrer, device, city, region, country, max_scroll, active_ms, human_score, signals)
     VALUES (
       ${visitId}, ${visitorId}, ${path},
       ${referrerHost(body.referrer, request.headers.get("host"))},
       ${deviceFrom(userAgent)},
-      ${geoHeader(request, "x-vercel-ip-city")},
-      ${geoHeader(request, "x-vercel-ip-country-region")},
+      ${city},
+      ${region},
       ${geoHeader(request, "x-vercel-ip-country")},
-      ${maxScroll}, ${activeMs}
+      ${maxScroll}, ${activeMs}, ${score}, ${signals ? JSON.stringify(signals) : null}::jsonb
     )
     ON CONFLICT (id) DO UPDATE SET
       last_seen = now(),
       max_scroll = GREATEST(visits.max_scroll, EXCLUDED.max_scroll),
-      active_ms = GREATEST(visits.active_ms, EXCLUDED.active_ms)
+      active_ms = GREATEST(visits.active_ms, EXCLUDED.active_ms),
+      human_score = GREATEST(visits.human_score, EXCLUDED.human_score),
+      signals = coalesce(EXCLUDED.signals, visits.signals)
     WHERE visits.visitor_id = EXCLUDED.visitor_id`;
 
   const sections = (Array.isArray(body.sections) ? body.sections : [])

@@ -12,6 +12,22 @@ const STOP_MS = 1_500;
 
 type SectionStat = { ms: number; stops: number; firstMs: number };
 
+// Raw evidence for the human score. Only events the browser marks as
+// trusted (real user input) are counted, so scripted scrolling doesn't qualify.
+type Signals = {
+  webdriver: boolean;
+  plugins: number;
+  hasWindow: boolean;
+  focused: boolean;
+  scrolls: number;
+  moves: number;
+  turns: number;
+  wheels: number;
+  touches: number;
+  keys: number;
+  clicks: number;
+};
+
 const randomId = () => crypto.randomUUID().replace(/-/g, "");
 
 function visitorId() {
@@ -54,6 +70,20 @@ export default function VisitTracker() {
     let lastScroll = Date.now();
     let stoppedIn: string | null = null;
     let dirty = true;
+    const signals: Signals = {
+      webdriver: navigator.webdriver === true,
+      plugins: navigator.plugins?.length ?? 0,
+      hasWindow: window.outerWidth > 0 && window.outerHeight > 0,
+      focused: document.hasFocus(),
+      scrolls: 0,
+      moves: 0,
+      turns: 0,
+      wheels: 0,
+      touches: 0,
+      keys: 0,
+      clicks: 0,
+    };
+    let lastAngle: number | null = null;
 
     const measureScroll = () => {
       const height = document.documentElement.scrollHeight;
@@ -72,6 +102,7 @@ export default function VisitTracker() {
         maxScroll,
         activeMs,
         sections: [...sections].map(([name, stat]) => [name, stat.ms, stat.stops, stat.firstMs]),
+        signals,
       });
       if (leaving && navigator.sendBeacon) {
         navigator.sendBeacon(ENDPOINT, new Blob([body], { type: "application/json" }));
@@ -83,6 +114,7 @@ export default function VisitTracker() {
     const tick = () => {
       const now = Date.now();
       if (document.hidden || now - lastInput > IDLE_MS) return;
+      if (!signals.focused && document.hasFocus()) signals.focused = true;
       activeMs += TICK_MS;
       const name = sectionAtViewportCenter();
       if (name) {
@@ -100,10 +132,29 @@ export default function VisitTracker() {
       dirty = true;
     };
 
-    const onInput = () => {
+    const markInput = (event: Event, key: "wheels" | "touches" | "keys" | "clicks") => {
       lastInput = Date.now();
+      if (event.isTrusted) signals[key] += 1;
     };
+    // Counts direction changes: a hand wobbles, a script tends to jump or glide straight.
+    const onPointerMove = (event: PointerEvent) => {
+      lastInput = Date.now();
+      if (!event.isTrusted || event.pointerType === "touch") return;
+      if (Math.abs(event.movementX) + Math.abs(event.movementY) < 2) return;
+      signals.moves += 1;
+      const angle = Math.atan2(event.movementY, event.movementX);
+      if (lastAngle !== null) {
+        const diff = Math.abs(angle - lastAngle);
+        if (Math.min(diff, 2 * Math.PI - diff) > 0.35) signals.turns += 1;
+      }
+      lastAngle = angle;
+    };
+    const onWheel = (event: WheelEvent) => markInput(event, "wheels");
+    const onTouch = (event: TouchEvent) => markInput(event, "touches");
+    const onKey = (event: KeyboardEvent) => markInput(event, "keys");
+    const onPointerDown = (event: PointerEvent) => markInput(event, "clicks");
     const onScroll = () => {
+      signals.scrolls += 1;
       lastInput = lastScroll = Date.now();
       stoppedIn = null;
       measureScroll();
@@ -119,9 +170,11 @@ export default function VisitTracker() {
     const tickTimer = window.setInterval(tick, TICK_MS);
     const flushTimer = window.setInterval(() => flush(false), FLUSH_MS);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pointermove", onInput, { passive: true });
-    window.addEventListener("keydown", onInput);
-    window.addEventListener("touchstart", onInput, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     document.addEventListener("visibilitychange", onHide);
     window.addEventListener("pagehide", onPageHide);
 
@@ -130,9 +183,11 @@ export default function VisitTracker() {
       window.clearInterval(tickTimer);
       window.clearInterval(flushTimer);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pointermove", onInput);
-      window.removeEventListener("keydown", onInput);
-      window.removeEventListener("touchstart", onInput);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("visibilitychange", onHide);
       window.removeEventListener("pagehide", onPageHide);
     };

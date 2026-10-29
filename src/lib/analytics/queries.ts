@@ -1,25 +1,29 @@
 import { getSql } from "./db";
 
+// Visits scoring at or above this are treated as people in the default view.
+export const HUMAN_THRESHOLD = 50;
+
 export type DashboardData = Awaited<ReturnType<typeof loadDashboard>>;
 
-export async function loadDashboard(days: number) {
+export async function loadDashboard(days: number, humansOnly: boolean) {
   const sql = await getSql();
   if (!sql) return null;
   const since = `${days} days`;
+  const min = humansOnly ? HUMAN_THRESHOLD : 0;
 
-  const [summary, daily, reach, sections, locations, pages, referrers, devices, recent] = await Promise.all([
+  const [summary, daily, reach, sections, locations, pages, referrers, devices, recent, split] = await Promise.all([
     sql`
       SELECT count(*)::int AS visits,
              count(DISTINCT visitor_id)::int AS visitors,
              coalesce(round(avg(active_ms)), 0)::int AS avg_ms,
              coalesce(round(avg(max_scroll)), 0)::int AS avg_scroll,
              count(DISTINCT (city, region, country)) FILTER (WHERE city IS NOT NULL)::int AS cities
-      FROM visits WHERE started_at > now() - ${since}::interval`,
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}`,
     sql`
       SELECT to_char(date_trunc('day', started_at AT TIME ZONE 'America/New_York'), 'YYYY-MM-DD') AS day,
              count(*)::int AS visits,
              count(DISTINCT visitor_id)::int AS visitors
-      FROM visits WHERE started_at > now() - ${since}::interval
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY 1 ORDER BY 1`,
     sql`
       SELECT count(*)::int AS total,
@@ -27,7 +31,7 @@ export async function loadDashboard(days: number) {
              count(*) FILTER (WHERE max_scroll >= 50)::int AS p50,
              count(*) FILTER (WHERE max_scroll >= 75)::int AS p75,
              count(*) FILTER (WHERE max_scroll >= 95)::int AS p100
-      FROM visits WHERE started_at > now() - ${since}::interval AND path = '/'`,
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min} AND path = '/'`,
     sql`
       SELECT v.path, s.section,
              count(*)::int AS viewers,
@@ -36,36 +40,40 @@ export async function loadDashboard(days: number) {
              sum(s.stops)::int AS stops,
              round(avg(s.first_ms))::int AS order_hint
       FROM section_views s JOIN visits v ON v.id = s.visit_id
-      WHERE v.started_at > now() - ${since}::interval
+      WHERE v.started_at > now() - ${since}::interval AND coalesce(v.human_score, 0) >= ${min}
       GROUP BY v.path, s.section
       ORDER BY v.path, order_hint`,
     sql`
       SELECT city, region, country,
              count(*)::int AS visits,
              count(DISTINCT visitor_id)::int AS visitors
-      FROM visits WHERE started_at > now() - ${since}::interval
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY city, region, country
       ORDER BY visitors DESC, visits DESC LIMIT 25`,
     sql`
       SELECT path, count(*)::int AS visits,
              round(avg(max_scroll))::int AS avg_scroll,
              round(avg(active_ms))::int AS avg_ms
-      FROM visits WHERE started_at > now() - ${since}::interval
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY path ORDER BY visits DESC LIMIT 20`,
     sql`
       SELECT coalesce(referrer, 'Direct') AS source, count(*)::int AS visits
-      FROM visits WHERE started_at > now() - ${since}::interval
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY 1 ORDER BY visits DESC LIMIT 10`,
     sql`
       SELECT device, count(*)::int AS visits
-      FROM visits WHERE started_at > now() - ${since}::interval
+      FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY device ORDER BY visits DESC`,
     sql`
       SELECT v.id, v.path, v.city, v.region, v.country, v.device, v.referrer,
-             v.max_scroll, v.active_ms, v.started_at,
+             v.max_scroll, v.active_ms, v.started_at, v.human_score,
              (SELECT s.section FROM section_views s WHERE s.visit_id = v.id ORDER BY s.ms DESC LIMIT 1) AS top_section
-      FROM visits v WHERE v.started_at > now() - ${since}::interval
+      FROM visits v WHERE v.started_at > now() - ${since}::interval AND coalesce(v.human_score, 0) >= ${min}
       ORDER BY v.started_at DESC LIMIT 50`,
+    sql`
+      SELECT count(*) FILTER (WHERE coalesce(human_score, 0) >= ${HUMAN_THRESHOLD})::int AS humans,
+             count(*) FILTER (WHERE coalesce(human_score, 0) < ${HUMAN_THRESHOLD})::int AS automated
+      FROM visits WHERE started_at > now() - ${since}::interval`,
   ]);
 
   return {
@@ -78,5 +86,6 @@ export async function loadDashboard(days: number) {
     referrers,
     devices,
     recent,
+    split: split[0],
   };
 }
