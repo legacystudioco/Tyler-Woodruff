@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono, Anton } from "next/font/google";
 import { MotionConfig } from "motion/react";
-import Navigation from "@/components/layout/Navigation";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -41,7 +40,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-ink text-paper antialiased">
         <MotionConfig reducedMotion="user">
-          <Navigation />
           {children}
         </MotionConfig>
       </body>
