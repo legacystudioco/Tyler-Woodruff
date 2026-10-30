@@ -2,6 +2,7 @@ import type { LocationData, VisitorData } from "@/lib/analytics/queries";
 import {
   BarRow,
   Empty,
+  cameFrom,
   HumanScore,
   Panel,
   duration,
@@ -132,7 +133,7 @@ export function VisitorView({ data, base, query }: { data: VisitorData & {}; bas
     (best, v) => (v.human_score === null ? best : Math.max(best ?? 0, v.human_score)),
     null,
   );
-  const referrer = [...visits].reverse().find((v) => v.referrer)?.referrer ?? "Direct";
+  const referrer = [...visits].reverse().map(cameFrom).find((from) => from !== "Direct") ?? "Direct";
 
   const sectionsByVisit = new Map<string, Row[]>();
   for (const row of sections) {
@@ -181,7 +182,7 @@ export function VisitorView({ data, base, query }: { data: VisitorData & {}; bas
                 </span>
                 <span>
                   <span className="text-mist">From </span>
-                  {visit.referrer ?? "Direct"}
+                  {cameFrom(visit)}
                 </span>
                 <span>
                   <span className="text-mist">Location </span>

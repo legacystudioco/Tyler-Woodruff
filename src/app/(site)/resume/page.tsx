@@ -24,7 +24,7 @@ export default function ResumePage() {
         <div className="flex flex-wrap gap-4 pt-2">
           {hasResume ? (
             <Link
-              href={resumeAssetPath}
+              href={contact.resumeHref}
               download
               className="group inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 font-mono text-xs uppercase tracking-wider text-ink transition-transform duration-300 hover:-translate-y-0.5"
             >

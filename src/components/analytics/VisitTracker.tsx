@@ -63,6 +63,12 @@ export default function VisitTracker() {
     const visit = randomId();
     const visitor = visitorId();
     const referrer = document.referrer;
+    const url = new URL(window.location.href);
+    const source = url.searchParams.get("via");
+    if (source) {
+      url.searchParams.delete("via");
+      window.history.replaceState(window.history.state, "", url);
+    }
     const sections = new Map<string, SectionStat>();
     let activeMs = 0;
     let maxScroll = 0;
@@ -99,6 +105,7 @@ export default function VisitTracker() {
         visitor,
         path: pathname,
         referrer,
+        source,
         maxScroll,
         activeMs,
         sections: [...sections].map(([name, stat]) => [name, stat.ms, stat.stops, stat.firstMs]),

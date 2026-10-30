@@ -42,6 +42,20 @@ async function migrate(sql: Sql) {
   await sql`CREATE INDEX IF NOT EXISTS visits_started_at_idx ON visits (started_at)`;
   await sql`ALTER TABLE visits ADD COLUMN IF NOT EXISTS human_score smallint`;
   await sql`ALTER TABLE visits ADD COLUMN IF NOT EXISTS signals jsonb`;
+  await sql`ALTER TABLE visits ADD COLUMN IF NOT EXISTS source text`;
+  await sql`
+    CREATE TABLE IF NOT EXISTS link_clicks (
+      id bigserial PRIMARY KEY,
+      slug text NOT NULL,
+      source text,
+      device text,
+      city text,
+      region text,
+      country text,
+      automated boolean NOT NULL DEFAULT false,
+      at timestamptz NOT NULL DEFAULT now()
+    )`;
+  await sql`CREATE INDEX IF NOT EXISTS link_clicks_at_idx ON link_clicks (at)`;
   await sql`
     CREATE TABLE IF NOT EXISTS section_views (
       visit_id text NOT NULL REFERENCES visits (id) ON DELETE CASCADE,

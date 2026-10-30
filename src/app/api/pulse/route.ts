@@ -2,21 +2,16 @@ import type { NextRequest } from "next/server";
 import { getSql } from "@/lib/analytics/db";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/analytics/auth";
 import { humanScore, isDataCenterTown, parseSignals } from "@/lib/analytics/humanScore";
+import { BOT_PATTERN, deviceFrom, geoHeader } from "@/lib/analytics/request";
+import { SOURCE_PATTERN } from "@/lib/analytics/trackedLinks";
 
 const ID_PATTERN = /^[a-f0-9]{32}$/;
-const BOT_PATTERN = /bot|crawl|spider|slurp|preview|headless|lighthouse|vercel-screenshot|facebookexternalhit|embedly/i;
 const MAX_MS = 6 * 60 * 60 * 1000;
 
 type SectionTuple = [string, number, number, number];
 
 const clampInt = (value: unknown, max: number) =>
   Math.max(0, Math.min(max, Math.round(Number(value) || 0)));
-
-function deviceFrom(userAgent: string) {
-  if (/ipad|tablet/i.test(userAgent)) return "Tablet";
-  if (/mobi|iphone|android/i.test(userAgent)) return "Mobile";
-  return "Desktop";
-}
 
 function referrerHost(referrer: unknown, ownHost: string | null) {
   if (typeof referrer !== "string" || !referrer) return null;
@@ -25,16 +20,6 @@ function referrerHost(referrer: unknown, ownHost: string | null) {
     return host && host !== ownHost?.replace(/^www\./, "") ? host.slice(0, 120) : null;
   } catch {
     return null;
-  }
-}
-
-function geoHeader(request: NextRequest, name: string) {
-  const value = request.headers.get(name);
-  if (!value) return null;
-  try {
-    return decodeURIComponent(value).slice(0, 80);
-  } catch {
-    return value.slice(0, 80);
   }
 }
 
@@ -70,9 +55,10 @@ export async function POST(request: NextRequest) {
   const region = geoHeader(request, "x-vercel-ip-country-region");
   const signals = parseSignals(body.signals);
   const score = humanScore(signals, userAgent, isDataCenterTown(city, region));
+  const source = typeof body.source === "string" && SOURCE_PATTERN.test(body.source) ? body.source : null;
 
   await sql`
-    INSERT INTO visits (id, visitor_id, path, referrer, device, city, region, country, max_scroll, active_ms, human_score, signals)
+    INSERT INTO visits (id, visitor_id, path, referrer, device, city, region, country, max_scroll, active_ms, human_score, signals, source)
     VALUES (
       ${visitId}, ${visitorId}, ${path},
       ${referrerHost(body.referrer, request.headers.get("host"))},
@@ -80,7 +66,7 @@ export async function POST(request: NextRequest) {
       ${city},
       ${region},
       ${geoHeader(request, "x-vercel-ip-country")},
-      ${maxScroll}, ${activeMs}, ${score}, ${signals ? JSON.stringify(signals) : null}::jsonb
+      ${maxScroll}, ${activeMs}, ${score}, ${signals ? JSON.stringify(signals) : null}::jsonb, ${source}
     )
     ON CONFLICT (id) DO UPDATE SET
       last_seen = now(),

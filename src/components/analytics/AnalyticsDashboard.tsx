@@ -1,7 +1,9 @@
 import type { DashboardData } from "@/lib/analytics/queries";
+import { TRACKED_LINKS } from "@/lib/analytics/trackedLinks";
 import {
   BarRow,
   Empty,
+  cameFrom,
   HumanScore,
   Panel,
   Toggle,
@@ -109,7 +111,7 @@ function DashboardBody({
   base: string;
   query: string;
 }) {
-  const { summary, reach, sections, locations, pages, referrers, devices, recent, split } = data;
+  const { summary, reach, sections, locations, pages, referrers, devices, recent, split, resumeTotals, resumeLinks, resumeRecent } = data;
   const daily = fillDays(data.daily, days);
   const dailyMax = Math.max(1, ...daily.map((d) => d.visits));
 
@@ -165,6 +167,56 @@ function DashboardBody({
           </div>
         ))}
       </div>
+
+      <Panel
+        title="Your resume"
+        note="A PDF can't report when it's opened, so this counts what can be measured: downloads from this site and clicks on the links inside the resume. Email scanners can click links too, so 'Confirmed people' is the number to trust."
+      >
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {[
+            { label: "Downloads from site", value: resumeTotals.downloads },
+            { label: "Link clicks", value: resumeTotals.clicks },
+            { label: "Confirmed people", value: resumeTotals.confirmed },
+            { label: "Automated clicks", value: resumeTotals.automated },
+          ].map((stat) => (
+            <div key={stat.label} className="flex flex-col gap-2 rounded-xl border border-white/10 p-4">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-mist">{stat.label}</span>
+              <span className="font-display text-2xl font-semibold tabular-nums">{number.format(stat.value)}</span>
+            </div>
+          ))}
+        </div>
+        {resumeLinks.length ? (
+          <div className="grid gap-8 lg:grid-cols-2">
+            <ul className="flex flex-col gap-4">
+              {resumeLinks.map((row) => (
+                <BarRow
+                  key={row.slug}
+                  label={TRACKED_LINKS[row.slug]?.label ?? row.slug}
+                  value={row.clicks}
+                  max={resumeLinks[0].clicks}
+                  detail={plural(row.clicks, "click")}
+                />
+              ))}
+            </ul>
+            <ul className="flex flex-col gap-2 text-sm">
+              {resumeRecent.map((row) => (
+                <li key={row.id} className="flex flex-wrap justify-between gap-x-4 border-b border-white/5 pb-2 last:border-0">
+                  <span>
+                    {TRACKED_LINKS[row.slug]?.label ?? row.slug}
+                    {row.source ? <span className="text-mist"> · {row.source}</span> : null}
+                    {row.automated ? <span className="text-[#ff8a7a]"> · automated</span> : null}
+                  </span>
+                  <span className="text-mist">
+                    {place(row)} · {when(row.at)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <Empty>No resume activity in this range yet.</Empty>
+        )}
+      </Panel>
 
       <Panel title="Viewers per day" note={`Last ${rangeLabel(days)}, Eastern time.`}>
         {summary.visits ? (
@@ -354,7 +406,7 @@ function DashboardBody({
                     <td className="py-2.5 pr-4 font-mono tabular-nums">{duration(row.active_ms)}</td>
                     <td className="py-2.5 pr-4 text-mist">{row.top_section ? sectionLabel(row.top_section) : "—"}</td>
                     <td className="py-2.5 pr-4 text-mist">{row.device}</td>
-                    <td className="py-2.5 pr-4 text-mist">{row.referrer ?? "Direct"}</td>
+                    <td className="py-2.5 pr-4 text-mist">{cameFrom(row)}</td>
                   </tr>
                 ))}
               </tbody>

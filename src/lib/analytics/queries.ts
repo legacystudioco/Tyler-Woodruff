@@ -11,7 +11,7 @@ export async function loadDashboard(days: number, humansOnly: boolean) {
   const since = `${days} days`;
   const min = humansOnly ? HUMAN_THRESHOLD : 0;
 
-  const [summary, daily, reach, sections, locations, pages, referrers, devices, recent, split] = await Promise.all([
+  const [summary, daily, reach, sections, locations, pages, referrers, devices, recent, split, resumeTotals, resumeLinks, resumeRecent] = await Promise.all([
     sql`
       SELECT count(*)::int AS visits,
              count(DISTINCT visitor_id)::int AS visitors,
@@ -57,7 +57,8 @@ export async function loadDashboard(days: number, humansOnly: boolean) {
       FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY path ORDER BY visits DESC LIMIT 20`,
     sql`
-      SELECT coalesce(referrer, 'Direct') AS source, count(*)::int AS visits
+      SELECT CASE WHEN source IS NOT NULL THEN 'Resume PDF' ELSE coalesce(referrer, 'Direct') END AS source,
+             count(*)::int AS visits
       FROM visits WHERE started_at > now() - ${since}::interval AND coalesce(human_score, 0) >= ${min}
       GROUP BY 1 ORDER BY visits DESC LIMIT 10`,
     sql`
@@ -66,7 +67,7 @@ export async function loadDashboard(days: number, humansOnly: boolean) {
       GROUP BY device ORDER BY visits DESC`,
     sql`
       SELECT v.id, v.visitor_id, v.path, v.city, v.region, v.country, v.device, v.referrer,
-             v.max_scroll, v.active_ms, v.started_at, v.human_score,
+             v.max_scroll, v.active_ms, v.started_at, v.human_score, v.source,
              (SELECT s.section FROM section_views s WHERE s.visit_id = v.id ORDER BY s.ms DESC LIMIT 1) AS top_section
       FROM visits v WHERE v.started_at > now() - ${since}::interval AND coalesce(v.human_score, 0) >= ${min}
       ORDER BY v.started_at DESC LIMIT 50`,
@@ -74,6 +75,23 @@ export async function loadDashboard(days: number, humansOnly: boolean) {
       SELECT count(*) FILTER (WHERE coalesce(human_score, 0) >= ${HUMAN_THRESHOLD})::int AS humans,
              count(*) FILTER (WHERE coalesce(human_score, 0) < ${HUMAN_THRESHOLD})::int AS automated
       FROM visits WHERE started_at > now() - ${since}::interval`,
+    sql`
+      SELECT
+        (SELECT count(*) FROM link_clicks WHERE at > now() - ${since}::interval AND slug = 'resume' AND NOT automated)::int AS downloads,
+        (SELECT count(*) FROM link_clicks WHERE at > now() - ${since}::interval AND slug <> 'resume' AND NOT automated)::int AS clicks,
+        (SELECT count(*) FROM link_clicks WHERE at > now() - ${since}::interval AND automated)::int AS automated,
+        (SELECT count(*) FROM visits WHERE started_at > now() - ${since}::interval AND source IS NOT NULL
+           AND coalesce(human_score, 0) >= ${HUMAN_THRESHOLD})::int AS confirmed`,
+    sql`
+      SELECT slug, count(*)::int AS clicks
+      FROM link_clicks
+      WHERE at > now() - ${since}::interval AND (NOT automated OR ${!humansOnly})
+      GROUP BY slug ORDER BY clicks DESC`,
+    sql`
+      SELECT id, slug, source, device, city, region, country, automated, at
+      FROM link_clicks
+      WHERE at > now() - ${since}::interval AND (NOT automated OR ${!humansOnly})
+      ORDER BY at DESC LIMIT 25`,
   ]);
 
   return {
@@ -87,6 +105,9 @@ export async function loadDashboard(days: number, humansOnly: boolean) {
     devices,
     recent,
     split: split[0],
+    resumeTotals: resumeTotals[0],
+    resumeLinks,
+    resumeRecent,
   };
 }
 
@@ -136,7 +157,7 @@ export async function loadVisitor(visitorId: string) {
 
   const [visits, sections] = await Promise.all([
     sql`
-      SELECT id, path, referrer, device, city, region, country, started_at, last_seen,
+      SELECT id, path, referrer, source, device, city, region, country, started_at, last_seen,
              max_scroll, active_ms, human_score, signals
       FROM visits WHERE visitor_id = ${visitorId}
       ORDER BY started_at DESC LIMIT 100`,

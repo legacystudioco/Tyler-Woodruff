@@ -126,6 +126,11 @@ export function BarRow({
   );
 }
 
+export function cameFrom(row: Row) {
+  if (row.source) return row.source === "resume" ? "Resume PDF" : `Resume PDF (${row.source})`;
+  return row.referrer ?? "Direct";
+}
+
 export function when(value: string | Date) {
   return new Date(value).toLocaleString("en-US", {
     timeZone: "America/New_York",
