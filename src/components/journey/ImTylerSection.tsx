@@ -12,7 +12,7 @@ export default function ImTylerSection() {
           <div className="aspect-[4/5] w-full max-w-md overflow-hidden rounded-2xl border border-ink/10">
             <ProjectMedia media={tylerPortrait} label="Tyler Woodruff" sizes="(min-width: 1024px) 36vw, 90vw" />
           </div>
-          <p className="mt-5 max-w-md text-balance text-base italic leading-relaxed text-ink/60">
+          <p className="mt-5 max-w-md text-balance text-center text-base font-bold italic leading-relaxed text-ink/70">
             In the infamous words of the great Vanilla Ice - If there&rsquo;s a problem, Yo! I&rsquo;ll solve it!
           </p>
         </div>
